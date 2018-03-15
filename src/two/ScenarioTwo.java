@@ -1,4 +1,4 @@
-package one;
+package two;
 
 import objects.Agent;
 import objects.Target;
@@ -8,9 +8,11 @@ import java.awt.Graphics2D;
 import javax.swing.JComponent;
 import java.util.*;
 
-public class ScenarioOne extends JComponent {
+public class ScenarioTwo extends JComponent {
 
-	/*CHECK IF THE COMMON METHODS FROM EACH SCENARIO CLASS CAN BE PUT INTO ONE CLASS AND HAVE THE SAME INSTANCE USED EVERYWHERE*/
+	/*ON THE REPORT, SPECIFY THAT BFS TAKES ON A PATH OF MOVING HORIZONTALLY UNTIL THE X COORDINATES OF AGENT AND TARGET MATCH AND THEN MOVING VERTICALLY TO THE TARGET SINCE THERE ARE NO OBSTACLES
+	 * AFTER NOTICING THAT BFS ALWAYS RETURNED THIS PATH, WE SIMPLIFIED THE CODE TO DO THE SAME INSTEAD OF CODING BFS IN THE CODE*/
+	
 	//initialize agent's physical characteristics
     int trainW = 50;
     int trainH = 50;
@@ -35,7 +37,7 @@ public class ScenarioOne extends JComponent {
     Target target5 = new Target(5, 650, 250, false);
 
     //constructor for the field's canvas
-    public ScenarioOne() {
+    public ScenarioTwo() {
     	
     	//store all agents in array list
     	agents.add(agent1);
@@ -56,7 +58,7 @@ public class ScenarioOne extends JComponent {
             public void run() {
                 while (true) {
                     repaint();
-                    try {Thread.sleep(100);} catch (Exception ex) {}
+                    try {Thread.sleep(10);} catch (Exception ex) {}
                 }
             }
         });
