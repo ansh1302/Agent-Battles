@@ -217,5 +217,4 @@ public class ScenarioTwo extends JComponent {
     		}
     	}
     }
->>>>>>> 2501ffa202649007bdc2bba1d2808f271c420882
 }

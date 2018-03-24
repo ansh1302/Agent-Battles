@@ -2,6 +2,7 @@ package one;
 
 import objects.Agent;
 import objects.Target;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -215,5 +216,4 @@ public class ScenarioOne extends JComponent {
     		}
     	}
     }
->>>>>>> 2501ffa202649007bdc2bba1d2808f271c420882
 }
