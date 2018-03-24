@@ -11,7 +11,7 @@ import java.util.*;
 
 public class ScenarioOne extends JComponent {
 
-	/*zzzzzzzzzzzzzzzzzzCHECK IF THE COMMON METHODS FROM EACH SCENARIO CLASS CAN BE PUT INTO ONE CLASS AND HAVE THE SAME INSTANCE USED EVERYWHERE*/
+	/*CHECK IF THE COMMON METHODS FROM EACH SCENARIO CLASS CAN BE PUT INTO ONE CLASS AND HAVE THE SAME INSTANCE USED EVERYWHERE*/
 	//initialize agent's physical characteristics
     int trainW = 50;
     int trainH = 50;
