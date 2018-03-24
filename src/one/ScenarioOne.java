@@ -152,20 +152,18 @@ public class ScenarioOne extends JComponent {
         //re-draw all field objects
         gg.setColor(Color.GRAY);
         gg.fillOval(agent1.getX(), agent1.getY(), trainW, trainH);
+        gg.fillOval(target1.getX(), target1.getY(), trainW, trainH);
         gg.setColor(Color.RED);
         gg.fillOval(agent2.getX(), agent2.getY(), trainW, trainH);
+        gg.fillOval(target2.getX(), target2.getY(), trainW, trainH);
         gg.setColor(Color.BLUE);
         gg.fillOval(agent3.getX(), agent3.getY(), trainW, trainH);
+        gg.fillOval(target3.getX(), target3.getY(), trainW, trainH);
         gg.setColor(Color.GREEN);
         gg.fillOval(agent4.getX(), agent4.getY(), trainW, trainH);
+        gg.fillOval(target4.getX(), target4.getY(), trainW, trainH);
         gg.setColor(Color.YELLOW);
         gg.fillOval(agent5.getX(), agent5.getY(), trainW, trainH);
-        
-        gg.setColor(Color.BLACK);
-        gg.fillOval(target1.getX(), target1.getY(), trainW, trainH);
-        gg.fillOval(target2.getX(), target2.getY(), trainW, trainH);
-        gg.fillOval(target3.getX(), target3.getY(), trainW, trainH);
-        gg.fillOval(target4.getX(), target4.getY(), trainW, trainH);
         gg.fillOval(target5.getX(), target5.getY(), trainW, trainH);
     }
     
@@ -207,7 +205,7 @@ public class ScenarioOne extends JComponent {
     	}
     }
     
-    //method to broadcast target location to all other agents
+  //method to broadcast target location to all other agents
     public void broadcast(Agent agent, Target target) {
     	for (int i = 0; i < agents.size(); i++) {
     		if (agents.get(i).getID() == agent.getID()) {
