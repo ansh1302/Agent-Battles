@@ -2,3 +2,5 @@
 way to the next closest target instead of returning to random movement
 
 - how to use private channels?
+
+- what is the difference between Scenario 1 and Scenario 3 in terms of implementation? :S
