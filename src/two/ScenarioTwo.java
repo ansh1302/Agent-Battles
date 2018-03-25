@@ -211,13 +211,14 @@ public class ScenarioTwo extends JComponent {
     
     //method to check if all targets have been acquired to signal the end of the game
     public boolean checkEndOfGame() {
-    	for (int i = 0; i < agents.size(); i++) {
-    		if (agents.get(i).getScore() == 5) {
-    			System.out.println("AGENT " + agents.get(i).getID() + " IS THE WINNER!");
-    			return true;
+    	for (int i = 0; i < targets.size(); i++) {
+    		for (int j = 0; j < targets.get(i).size(); j++) {
+    			if (!targets.get(i).get(j).getCaptured()) {
+    				return false;
+    			}
     		}
     	}
-    	return false;
+    	return true;
     }
     
     //method to check for agents' collisions with boundaries and update direction accordingly
