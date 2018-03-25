@@ -13,7 +13,7 @@ public class ScenarioOne extends JComponent {
 
 	/*CHECK IF THE COMMON METHODS FROM EACH SCENARIO CLASS CAN BE PUT INTO ONE CLASS AND HAVE THE SAME INSTANCE USED EVERYWHERE*/
 	//initialize agent's physical characteristics
-    int trainW = 50;
+    int agentW = 50;
     int trainH = 50;
     int trainSpeed = 50;
     
@@ -21,29 +21,28 @@ public class ScenarioOne extends JComponent {
     ArrayList<Agent> agents = new ArrayList<Agent>();
     ArrayList<Target> targets = new ArrayList<Target>();
     
-    //create each agent object
-	Agent agent1 = new Agent(1, 100, 100, 100, 100, "RIGHT");
-	Agent agent2 = new Agent(2, 200, 200, 200, 200, "LEFT");
-	Agent agent3 = new Agent(3, 300, 300, 300, 300, "UP");
-	Agent agent4 = new Agent(4, 400, 400, 400, 400, "DOWN");
-	Agent agent5 = new Agent(5, 500, 500, 500, 500, "RIGHT");
-	
-	//create each target object
-    Target target1 = new Target(1, 400, 650, false);
-    Target target2 = new Target(2, 100, 650, false);
-    Target target3 = new Target(3, 400, 700, false);
-    Target target4 = new Target(4, 50, 150, false);
-    Target target5 = new Target(5, 650, 250, false);
+    //create each target object
+    Target target1 = new Target(0, 400, 650, false);
+    Target target2 = new Target(1, 100, 650, false);
+    Target target3 = new Target(2, 400, 700, false);
+    Target target4 = new Target(3, 50, 150, false);
+    Target target5 = new Target(4, 650, 250, false);
 
     //constructor for the field's canvas
     public ScenarioOne() {
+    	//array of direction strings
+    	String[] directions = {"UP", "DOWN", "LEFT", "RIGHT"};
     	
-    	//store all agents in array list
-    	agents.add(agent1);
-    	agents.add(agent2);
-    	agents.add(agent3);
-    	agents.add(agent4);
-    	agents.add(agent5);
+    	//starting coordinates and direction
+    	Random r = new Random();
+    	int coor = 100; int dir;
+    	
+    	//loop to dynamically create and initialize agents
+    	for (int i = 0; i < 5; i++) {
+    		dir = r.nextInt(3) + 0;
+    		agents.add(new Agent(i, coor, coor, coor, coor, directions[dir]));
+    		coor += 100;
+    	}
     	
     	//store all targets in array list
     	targets.add(target1);
@@ -122,27 +121,22 @@ public class ScenarioOne extends JComponent {
         	//determine which targets to keep present on playing field
         	for (int j = 0; j < targets.size(); j++) {
         		
-        		//broadcast target if agent lands on it and the IDs don't match
-        		if(targets.get(j).getX() == agents.get(i).getX() && targets.get(j).getY() == agents.get(i).getY() && !targets.get(j).getCaptured()) {
+        		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
+        		if((getDistance(agents.get(i), targets.get(j)) <= 50) && (!targets.get(j).getCaptured())) {
         			if(targets.get(j).getID() != agents.get(i).getID()) {
         				broadcast(agents.get(i), targets.get(j));
+        			} else {
+        				//set target's location and known location outside the playing field 
+                    	targets.get(j).setX(-100); targets.get(j).setY(-100);
+                    	agents.get(i).setTargetX(-100);
+                    	agents.get(i).setTargetY(-100);
+                    	
+                    	//set target's captured status to true and increment respective agent's score
+                    	targets.get(j).setCaptured(true);
+                    	agents.get(i).incrementScore();
+                        System.out.println("Target acquired!");
         			}
         		}
-        		
-        		//if matched target belongs to agent and is not captured, then capture it
-        		if (checkTarget(agents.get(i), targets.get(j))) {
-        			
-        			//set target's location and known location outside the playing field 
-                	targets.get(j).setX(-100); targets.get(j).setY(-100);
-                	agents.get(i).setTargetX(-100);
-                	agents.get(i).setTargetY(-100);
-                	
-                	//set target's captured status to true and increment respective agent's score
-                	targets.get(j).setCaptured(true);
-                	agents.get(i).incrementScore();
-                    System.out.println("Target acquired!");
-                }
-        		
         	}
         	
         	//store agent's last known location for next movement
@@ -152,20 +146,24 @@ public class ScenarioOne extends JComponent {
         
         //re-draw all field objects
         gg.setColor(Color.GRAY);
-        gg.fillOval(agent1.getX(), agent1.getY(), trainW, trainH);
-        gg.fillOval(target1.getX(), target1.getY(), trainW, trainH);
+        gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, trainH);
+        gg.fillOval(target1.getX(), target1.getY(), agentW, trainH);
         gg.setColor(Color.RED);
-        gg.fillOval(agent2.getX(), agent2.getY(), trainW, trainH);
-        gg.fillOval(target2.getX(), target2.getY(), trainW, trainH);
+        gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, trainH);
+        gg.fillOval(target2.getX(), target2.getY(), agentW, trainH);
         gg.setColor(Color.BLUE);
-        gg.fillOval(agent3.getX(), agent3.getY(), trainW, trainH);
-        gg.fillOval(target3.getX(), target3.getY(), trainW, trainH);
+        gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, trainH);
+        gg.fillOval(target3.getX(), target3.getY(), agentW, trainH);
         gg.setColor(Color.GREEN);
-        gg.fillOval(agent4.getX(), agent4.getY(), trainW, trainH);
-        gg.fillOval(target4.getX(), target4.getY(), trainW, trainH);
+        gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, trainH);
+        gg.fillOval(target4.getX(), target4.getY(), agentW, trainH);
         gg.setColor(Color.YELLOW);
-        gg.fillOval(agent5.getX(), agent5.getY(), trainW, trainH);
-        gg.fillOval(target5.getX(), target5.getY(), trainW, trainH);
+        gg.fillOval(agents.get(4).getX(), agents.get(4).getY(), agentW, trainH);
+        gg.fillOval(target5.getX(), target5.getY(), agentW, trainH);
+    }
+    
+    public double getDistance(Agent agent, Target target) {
+    	return Math.sqrt(Math.pow((agent.getX()-target.getX()), 2) + Math.pow((agent.getY()-target.getY()), 2));
     }
     
     //method to check if all targets are captured
@@ -176,15 +174,6 @@ public class ScenarioOne extends JComponent {
     		}
     	}
     	return true;
-    }
-    
-    //method to check if current target should be captured or not
-    public boolean checkTarget(Agent agent, Target target) {
-    	if ((agent.getX() == target.getX()) && (agent.getY() == target.getY()) && (agent.getID() == target.getID()) && (!target.getCaptured())) {
-    		return true;
-    	} else {
-    		return false;
-    	}
     }
     
     //method to check for agents' collisions with boundaries and update direction accordingly
