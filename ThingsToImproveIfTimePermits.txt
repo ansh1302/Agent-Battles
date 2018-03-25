@@ -1,2 +1,4 @@
 - save agent's knowledge of it's target locations in a set so after acquiring one target, it can make it's 
 way to the next closest target instead of returning to random movement
+
+- how to use private channels?
