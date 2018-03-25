@@ -2,6 +2,7 @@ package one;
 
 import objects.Agent;
 import objects.Target;
+//import objects.Point;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -14,28 +15,36 @@ public class ScenarioOne extends JComponent {
 	/*CHECK IF THE COMMON METHODS FROM EACH SCENARIO CLASS CAN BE PUT INTO ONE CLASS AND HAVE THE SAME INSTANCE USED EVERYWHERE*/
 	//initialize agent's physical characteristics
     int agentW = 50;
-    int trainH = 50;
-    int trainSpeed = 50;
+    int agentH = 50;
+    int agentSpeed = 50;
     
     //declare array lists to store all agents and respective targets
     ArrayList<Agent> agents = new ArrayList<Agent>();
-    ArrayList<Target> targets = new ArrayList<Target>();
+    //ArrayList<Target> targets = new ArrayList<Target>();
+    ArrayList<ArrayList<Target>> targets = new ArrayList<ArrayList<Target>>();
     
     //create each target object
-    Target target1 = new Target(0, 400, 650, false);
+    /*Target target1 = new Target(0, 400, 650, false);
     Target target2 = new Target(1, 100, 650, false);
     Target target3 = new Target(2, 400, 700, false);
     Target target4 = new Target(3, 50, 150, false);
-    Target target5 = new Target(4, 650, 250, false);
+    Target target5 = new Target(4, 650, 250, false);*/
 
     //constructor for the field's canvas
     public ScenarioOne() {
     	//array of direction strings
     	String[] directions = {"UP", "DOWN", "LEFT", "RIGHT"};
+    	//Set<Point> availablePoints = new HashSet<Point>();
+    	
+    	/*for (int i = 100; i <= 700; i += 50) {
+    		for (int j = 100; j <= 700; j += 50) {
+    			availablePoints.add(new Point(i, j));
+    		}
+    	}*/
     	
     	//starting coordinates and direction
     	Random r = new Random();
-    	int coor = 100; int dir;
+    	int coor = 100; int dir; int coorX, coorY;
     	
     	//loop to dynamically create and initialize agents
     	for (int i = 0; i < 5; i++) {
@@ -44,19 +53,44 @@ public class ScenarioOne extends JComponent {
     		coor += 100;
     	}
     	
+    	int IDcounter = 0;
+    	for (int i = 0; i < 5; i++) {
+    		targets.add(new ArrayList<Target>());
+    		
+    		for (int j = 0; j < 5; j++) {
+    			//boolean added = false;
+    			//while (!added) {
+    				coorX = getRounded(r.nextInt(600) + 100);
+					coorY = getRounded(r.nextInt(600) + 100);
+    				//if (availablePoints.contains(new Point(coorX, coorY))) {
+    					//System.out.println("its available");
+    					targets.get(i).add(new Target(IDcounter, coorX, coorY, false));
+    					//IDcounter++;
+    					//availablePoints.remove(new Point(coorX, coorY));
+    					//added = true;
+    				//} else {
+    					//System.out.println("its not available");
+    					//coorX = r.nextInt(700) + 100;
+    					//coorY = r.nextInt(700) + 100;
+    				//}
+    			//}
+    		}
+    		IDcounter++;
+    	}
+    	
     	//store all targets in array list
-    	targets.add(target1);
+    	/*targets.add(target1);
     	targets.add(target2);
     	targets.add(target3);
     	targets.add(target4);
-    	targets.add(target5);
+    	targets.add(target5);*/
     	
     	//GUI runnable method
         Thread animationThread = new Thread(new Runnable() {
             public void run() {
                 while (true) {
                     repaint();
-                    try {Thread.sleep(100);} catch (Exception ex) {}
+                    try {Thread.sleep(150);} catch (Exception ex) {}
                 }
             }
         });
@@ -109,17 +143,17 @@ public class ScenarioOne extends JComponent {
             }
         	
         	//run the game if not all targets have been captured
-        	if (!allTargetsTaken()) {
+        	//if (!allTargetsTaken()) {
         		//move agent either horizontally or vertically
             	if (agents.get(i).getDirection().equals("LEFT") || agents.get(i).getDirection().equals("RIGHT")) {
-                	agents.get(i).setX(agents.get(i).getLastX() + (trainSpeed*agents.get(i).getDirectionX()));
+                	agents.get(i).setX(agents.get(i).getLastX() + (agentSpeed*agents.get(i).getDirectionX()));
                 } else if (agents.get(i).getDirection().equals("UP") || agents.get(i).getDirection().equals("DOWN")) {
-                	agents.get(i).setY(agents.get(i).getLastY() + (trainSpeed*agents.get(i).getDirectionY()));
+                	agents.get(i).setY(agents.get(i).getLastY() + (agentSpeed*agents.get(i).getDirectionY()));
                 }
-        	}
+        	//}
         	
         	//determine which targets to keep present on playing field
-        	for (int j = 0; j < targets.size(); j++) {
+        	/*for (int j = 0; j < targets.size(); j++) {
         		
         		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
         		if((getDistance(agents.get(i), targets.get(j)) <= 50) && (!targets.get(j).getCaptured())) {
@@ -137,6 +171,29 @@ public class ScenarioOne extends JComponent {
                         System.out.println("Target acquired!");
         			}
         		}
+        	}*/
+        	
+        	for (int x = 0; x < targets.size(); x++) {
+	        	for (int j = 0; j < targets.get(x).size(); j++) {
+	        		
+	        		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
+	        		if((getDistance(agents.get(i), targets.get(x).get(j)) <= 50) && (!targets.get(x).get(j).getCaptured())) {
+	        			System.out.println("Agent ID: " + agents.get(i).getID() + "       " + "Target ID: " + targets.get(x).get(j).getID());
+	        			if(targets.get(x).get(j).getID() != agents.get(i).getID()) {
+	        				broadcast(agents.get(i), targets.get(x).get(j));
+	        			} else {
+	        				//set target's location and known location outside the playing field 
+	                    	targets.get(x).get(j).setX(-100); targets.get(x).get(j).setY(-100);
+	                    	agents.get(i).setTargetX(-100);
+	                    	agents.get(i).setTargetY(-100);
+	                    	
+	                    	//set target's captured status to true and increment respective agent's score
+	                    	targets.get(x).get(j).setCaptured(true);
+	                    	agents.get(i).incrementScore();
+	                        System.out.println("Target acquired by Agent " + i);
+	        			}
+	        		}
+	        	}
         	}
         	
         	//store agent's last known location for next movement
@@ -144,22 +201,107 @@ public class ScenarioOne extends JComponent {
             agents.get(i).setLastY(agents.get(i).getY());
         }
         
+        //drawObjects(agentW, agentH, gg);
+        for (int i = 0; i < 5; i++) {
+    		if (i == 0) {
+    				gg.setColor(Color.GRAY);
+    		        gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		} else if (i == 1) {
+    				gg.setColor(Color.RED);
+    		        gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		} else if (i == 2) {
+    				gg.setColor(Color.BLUE);
+    		        gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {    					
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		} else if (i == 3) {
+    				gg.setColor(Color.GREEN);
+    		        gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		} else if (i == 4) {
+    				gg.setColor(Color.YELLOW);
+    		        gg.fillOval(agents.get(4).getX(), agents.get(4).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		}
+    	}
+        
         //re-draw all field objects
-        gg.setColor(Color.GRAY);
-        gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, trainH);
-        gg.fillOval(target1.getX(), target1.getY(), agentW, trainH);
+        /*gg.setColor(Color.GRAY);
+        gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, agentH);
+        gg.fillOval(target1.getX(), target1.getY(), agentW, agentH);
         gg.setColor(Color.RED);
-        gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, trainH);
-        gg.fillOval(target2.getX(), target2.getY(), agentW, trainH);
+        gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, agentH);
+        gg.fillOval(target2.getX(), target2.getY(), agentW, agentH);
         gg.setColor(Color.BLUE);
-        gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, trainH);
-        gg.fillOval(target3.getX(), target3.getY(), agentW, trainH);
+        gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, agentH);
+        gg.fillOval(target3.getX(), target3.getY(), agentW, agentH);
         gg.setColor(Color.GREEN);
-        gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, trainH);
-        gg.fillOval(target4.getX(), target4.getY(), agentW, trainH);
+        gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, agentH);
+        gg.fillOval(target4.getX(), target4.getY(), agentW, agentH);
         gg.setColor(Color.YELLOW);
-        gg.fillOval(agents.get(4).getX(), agents.get(4).getY(), agentW, trainH);
-        gg.fillOval(target5.getX(), target5.getY(), agentW, trainH);
+        gg.fillOval(agents.get(4).getX(), agents.get(4).getY(), agentW, agentH);
+        gg.fillOval(target5.getX(), target5.getY(), agentW, agentH);*/
+    }
+    
+    /*public void drawObjects(int agentW, int agentY, Graphics gg) {
+    	for (int i = 0; i < 5; i++) {
+    		switch(i) {
+    			case 0:
+    				gg.setColor(Color.GRAY);
+    		        gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.setColor(Color.GRAY);
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    			case 1:
+    				gg.setColor(Color.RED);
+    		        gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.setColor(Color.RED);
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    			case 2:
+    				gg.setColor(Color.BLUE);
+    		        gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.setColor(Color.BLUE);
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    			case 3:
+    				gg.setColor(Color.GREEN);
+    		        gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.setColor(Color.GREEN);
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    			case 4:
+    				gg.setColor(Color.YELLOW);
+    		        gg.fillOval(agents.get(4).getX(), agents.get(4).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.setColor(Color.YELLOW);
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		}
+    	}
+    }*/
+    
+    public int getRounded(int x) {
+    	if (x%50 == 0) {
+    		return x;
+    	} else {
+    		return x + (50 - (x % 50));
+    	}
     }
     
     public double getDistance(Agent agent, Target target) {
@@ -167,10 +309,21 @@ public class ScenarioOne extends JComponent {
     }
     
     //method to check if all targets are captured
-    public boolean allTargetsTaken() {
+    /*public boolean allTargetsTaken() {
     	for (int i = 0; i < targets.size(); i++) {
     		if (!targets.get(i).getCaptured()) {
     			return false;
+    		}
+    	}
+    	return true;
+    }*/
+    
+    public boolean allTargetsTaken() {
+    	for (int i = 0; i < targets.size(); i++) {
+    		for (int j = 0; j < targets.get(i).size(); j++) {
+	    		if (!targets.get(i).get(j).getCaptured()) {
+	    			return false;
+	    		}		
     		}
     	}
     	return true;
