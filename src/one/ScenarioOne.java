@@ -38,6 +38,7 @@ public class ScenarioOne extends JComponent {
     		coor += 100;
     	}
     	
+    	//loop to dynamically create and initialize all targets
     	int IDcounter = 0;
     	for (int i = 0; i < 5; i++) {
     		targets.add(new ArrayList<Target>());
@@ -116,15 +117,19 @@ public class ScenarioOne extends JComponent {
                 }
         	}
         	
+        	//check if any targets are within range of any agents
         	for (int x = 0; x < targets.size(); x++) {
 	        	for (int j = 0; j < targets.get(x).size(); j++) {
 	        		
 	        		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
 	        		if((getDistance(agents.get(i), targets.get(x).get(j)) <= 50) && (!targets.get(x).get(j).getCaptured())) {
 	        			System.out.println("Agent ID: " + agents.get(i).getID() + "       " + "Target ID: " + targets.get(x).get(j).getID());
+	        			
+	        			//check if target belongs to current agent
 	        			if(targets.get(x).get(j).getID() != agents.get(i).getID()) {
 	        				broadcast(agents.get(i), targets.get(x).get(j));
 	        			} else {
+	        				
 	        				//set target's location and known location outside the playing field 
 	                    	targets.get(x).get(j).setX(-100); targets.get(x).get(j).setY(-100);
 	                    	agents.get(i).setTargetX(-100);
@@ -144,7 +149,7 @@ public class ScenarioOne extends JComponent {
             agents.get(i).setLastY(agents.get(i).getY());
         }
         
-        //drawObjects(agentW, agentH, gg);
+        //draw in all the objects
         for (int i = 0; i < 5; i++) {
     		if (i == 0) {
     				gg.setColor(Color.GRAY);
@@ -180,18 +185,21 @@ public class ScenarioOne extends JComponent {
     	}
     }
     
+    //round to nearest multiple of 50
     public int getRounded(int x) {
     	if (x%50 == 0) {
-    		return x;
+    		return x; //return same number if it is already a multiple of 50
     	} else {
     		return x + (50 - (x % 50));
     	}
     }
     
+    //method to calculate the distance between two objects
     public double getDistance(Agent agent, Target target) {
     	return Math.sqrt(Math.pow((agent.getX()-target.getX()), 2) + Math.pow((agent.getY()-target.getY()), 2));
     }
     
+    //method to check if all targets have been acquired to signal the end of the game
     public boolean allTargetsTaken() {
     	for (int i = 0; i < targets.size(); i++) {
     		for (int j = 0; j < targets.get(i).size(); j++) {
@@ -222,10 +230,10 @@ public class ScenarioOne extends JComponent {
     	}
     }
     
-  //method to broadcast target location to all other agents
+    //method to broadcast target location to all other agents
     public void broadcast(Agent agent, Target target) {
     	for (int i = 0; i < agents.size(); i++) {
-    		if (agents.get(i).getID() == agent.getID()) {
+    		if (agents.get(i).getID() == agent.getID()) { //do not broadcast to yourself
     			continue;
     		} else {
     			agents.get(i).receive(target.getX(), target.getY(), target.getID());
