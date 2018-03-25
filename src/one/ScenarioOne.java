@@ -209,7 +209,7 @@ public class ScenarioOne extends JComponent {
     	return Math.sqrt(Math.pow((agent.getX()-target.getX()), 2) + Math.pow((agent.getY()-target.getY()), 2));
     }
     
-    //method to check if all targets have been acquired to signal the end of the game
+    //method to check if any agent has acquired all of its targets to signal end of game
     public boolean checkEndOfGame() {
     	for (int i = 0; i < agents.size(); i++) {
     		if (agents.get(i).getScore() == 5) {
