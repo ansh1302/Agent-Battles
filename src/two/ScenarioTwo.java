@@ -14,19 +14,13 @@ public class ScenarioTwo extends JComponent {
 	/*CHECK IF THE COMMON METHODS FROM EACH SCENARIO CLASS CAN BE PUT INTO ONE CLASS AND HAVE THE SAME INSTANCE USED EVERYWHERE*/
 	//initialize agent's physical characteristics
     int agentW = 50;
-    int trainH = 50;
-    int trainSpeed = 50;
+    int agentH = 50;
+    int agentSpeed = 50;
     
     //declare array lists to store all agents and respective targets
     ArrayList<Agent> agents = new ArrayList<Agent>();
-    ArrayList<Target> targets = new ArrayList<Target>();
-    
-    //create each target object
-    Target target1 = new Target(0, 400, 650, false);
-    Target target2 = new Target(1, 100, 650, false);
-    Target target3 = new Target(2, 400, 700, false);
-    Target target4 = new Target(3, 50, 150, false);
-    Target target5 = new Target(4, 650, 250, false);
+    //ArrayList<Target> targets = new ArrayList<Target>();
+    ArrayList<ArrayList<Target>> targets = new ArrayList<ArrayList<Target>>();
 
     //constructor for the field's canvas
     public ScenarioTwo() {
@@ -35,7 +29,7 @@ public class ScenarioTwo extends JComponent {
     	
     	//starting coordinates and direction
     	Random r = new Random();
-    	int coor = 100; int dir;
+    	int coor = 100; int dir; int coorX, coorY;
     	
     	//loop to dynamically create and initialize agents
     	for (int i = 0; i < 5; i++) {
@@ -44,12 +38,17 @@ public class ScenarioTwo extends JComponent {
     		coor += 100;
     	}
     	
-    	//store all targets in array list
-    	targets.add(target1);
-    	targets.add(target2);
-    	targets.add(target3);
-    	targets.add(target4);
-    	targets.add(target5);
+    	//loop to dynamically create and initialize all targets
+    	int IDcounter = 0;
+    	for (int i = 0; i < 5; i++) {
+    		targets.add(new ArrayList<Target>());
+    		for (int j = 0; j < 5; j++) {
+    			coorX = getRounded(r.nextInt(600) + 100);
+				coorY = getRounded(r.nextInt(600) + 100);
+    			targets.get(i).add(new Target(IDcounter, coorX, coorY, false));
+    		}
+    		IDcounter++;
+    	}
     	
     	//GUI runnable method
         Thread animationThread = new Thread(new Runnable() {
@@ -112,65 +111,111 @@ public class ScenarioTwo extends JComponent {
         	if (!allTargetsTaken()) {
         		//move agent either horizontally or vertically
             	if (agents.get(i).getDirection().equals("LEFT") || agents.get(i).getDirection().equals("RIGHT")) {
-                	agents.get(i).setX(agents.get(i).getLastX() + (trainSpeed*agents.get(i).getDirectionX()));
+                	agents.get(i).setX(agents.get(i).getLastX() + (agentSpeed*agents.get(i).getDirectionX()));
                 } else if (agents.get(i).getDirection().equals("UP") || agents.get(i).getDirection().equals("DOWN")) {
-                	agents.get(i).setY(agents.get(i).getLastY() + (trainSpeed*agents.get(i).getDirectionY()));
+                	agents.get(i).setY(agents.get(i).getLastY() + (agentSpeed*agents.get(i).getDirectionY()));
                 }
         	}
         	
-        	//determine which targets to keep present on playing field
-        	for (int j = 0; j < targets.size(); j++) {
-        		
-        		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
-        		if((getDistance(agents.get(i), targets.get(j)) <= 50) && (!targets.get(j).getCaptured())) {
-        			if(targets.get(j).getID() != agents.get(i).getID()) {
-        				broadcast(agents.get(i), targets.get(j));
-        			} else {
-        				//set target's location and known location outside the playing field 
-                    	targets.get(j).setX(-100); targets.get(j).setY(-100);
-                    	agents.get(i).setTargetX(-100);
-                    	agents.get(i).setTargetY(-100);
-                    	
-                    	//set target's captured status to true and increment respective agent's score
-                    	targets.get(j).setCaptured(true);
-                    	agents.get(i).incrementScore();
-                        System.out.println("Target acquired!");
-        			}
-        		}
-        	}
+        	checkRange(i); //check if any target is in range with any agent
         	
         	//store agent's last known location for next movement
         	agents.get(i).setLastX(agents.get(i).getX());
             agents.get(i).setLastY(agents.get(i).getY());
         }
         
-        //re-draw all field objects
-        gg.setColor(Color.GRAY);
-        gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, trainH);
-        gg.fillOval(target1.getX(), target1.getY(), agentW, trainH);
-        gg.setColor(Color.RED);
-        gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, trainH);
-        gg.fillOval(target2.getX(), target2.getY(), agentW, trainH);
-        gg.setColor(Color.BLUE);
-        gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, trainH);
-        gg.fillOval(target3.getX(), target3.getY(), agentW, trainH);
-        gg.setColor(Color.GREEN);
-        gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, trainH);
-        gg.fillOval(target4.getX(), target4.getY(), agentW, trainH);
-        gg.setColor(Color.YELLOW);
-        gg.fillOval(agents.get(4).getX(), agents.get(4).getY(), agentW, trainH);
-        gg.fillOval(target5.getX(), target5.getY(), agentW, trainH);
+        drawObjects(agentW, agentH, gg); //draw all objects on screen
     }
     
+    //method to display all visual components on screenq
+    public void drawObjects(int agentW, int agentH, Graphics gg) {
+    	//draw in all the objects
+        for (int i = 0; i < 5; i++) {
+    		if (i == 0) {
+    				gg.setColor(Color.GRAY);
+    		        gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		} else if (i == 1) {
+    				gg.setColor(Color.RED);
+    		        gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		} else if (i == 2) {
+    				gg.setColor(Color.BLUE);
+    		        gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {    					
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		} else if (i == 3) {
+    				gg.setColor(Color.GREEN);
+    		        gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		} else if (i == 4) {
+    				gg.setColor(Color.YELLOW);
+    		        gg.fillOval(agents.get(4).getX(), agents.get(4).getY(), agentW, agentH);
+    				for (int j = 0; j < targets.get(i).size(); j++) {
+    					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+    				}
+    		}
+    	}
+    }
+    
+    //method to check each agent's radar
+    public void checkRange(int i) {
+    	//check if any targets are within range of any agents
+    	for (int x = 0; x < targets.size(); x++) {
+        	for (int j = 0; j < targets.get(x).size(); j++) {
+        		
+        		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
+        		if((getDistance(agents.get(i), targets.get(x).get(j)) <= 50) && (!targets.get(x).get(j).getCaptured())) {
+        			System.out.println("Agent ID: " + agents.get(i).getID() + "       " + "Target ID: " + targets.get(x).get(j).getID());
+        			
+        			//check if target belongs to current agent
+        			if(targets.get(x).get(j).getID() != agents.get(i).getID()) {
+        				broadcast(agents.get(i), targets.get(x).get(j));
+        			} else {
+        				
+        				//set target's location and known location outside the playing field 
+                    	targets.get(x).get(j).setX(-100); targets.get(x).get(j).setY(-100);
+                    	agents.get(i).setTargetX(-100);
+                    	agents.get(i).setTargetY(-100);
+                    	
+                    	//set target's captured status to true and increment respective agent's score
+                    	targets.get(x).get(j).setCaptured(true);
+                    	agents.get(i).incrementScore();
+                        System.out.println("Target acquired by Agent " + i);
+        			}
+        		}
+        	}
+    	}
+    }
+    
+    //round to nearest multiple of 50
+    public int getRounded(int x) {
+    	if (x%50 == 0) {
+    		return x; //return same number if it is already a multiple of 50
+    	} else {
+    		return x + (50 - (x % 50));
+    	}
+    }
+    
+    //method to calculate the distance between two objects
     public double getDistance(Agent agent, Target target) {
     	return Math.sqrt(Math.pow((agent.getX()-target.getX()), 2) + Math.pow((agent.getY()-target.getY()), 2));
     }
     
-    //method to check if all targets are captured
+    //method to check if all targets have been acquired to signal the end of the game
     public boolean allTargetsTaken() {
     	for (int i = 0; i < targets.size(); i++) {
-    		if (!targets.get(i).getCaptured()) {
-    			return false;
+    		for (int j = 0; j < targets.get(i).size(); j++) {
+	    		if (!targets.get(i).get(j).getCaptured()) {
+	    			return false;
+	    		}		
     		}
     	}
     	return true;
@@ -195,10 +240,10 @@ public class ScenarioTwo extends JComponent {
     	}
     }
     
-  //method to broadcast target location to all other agents
+    //method to broadcast target location to all other agents
     public void broadcast(Agent agent, Target target) {
     	for (int i = 0; i < agents.size(); i++) {
-    		if (agents.get(i).getID() == agent.getID()) {
+    		if (agents.get(i).getID() == agent.getID()) { //do not broadcast to yourself
     			continue;
     		} else {
     			agents.get(i).receive(target.getX(), target.getY(), target.getID());

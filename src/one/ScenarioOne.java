@@ -55,7 +55,7 @@ public class ScenarioOne extends JComponent {
             public void run() {
                 while (true) {
                     repaint();
-                    try {Thread.sleep(150);} catch (Exception ex) {}
+                    try {Thread.sleep(100);} catch (Exception ex) {}
                 }
             }
         });
@@ -117,39 +117,19 @@ public class ScenarioOne extends JComponent {
                 }
         	}
         	
-        	//check if any targets are within range of any agents
-        	for (int x = 0; x < targets.size(); x++) {
-	        	for (int j = 0; j < targets.get(x).size(); j++) {
-	        		
-	        		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
-	        		if((getDistance(agents.get(i), targets.get(x).get(j)) <= 50) && (!targets.get(x).get(j).getCaptured())) {
-	        			System.out.println("Agent ID: " + agents.get(i).getID() + "       " + "Target ID: " + targets.get(x).get(j).getID());
-	        			
-	        			//check if target belongs to current agent
-	        			if(targets.get(x).get(j).getID() != agents.get(i).getID()) {
-	        				broadcast(agents.get(i), targets.get(x).get(j));
-	        			} else {
-	        				
-	        				//set target's location and known location outside the playing field 
-	                    	targets.get(x).get(j).setX(-100); targets.get(x).get(j).setY(-100);
-	                    	agents.get(i).setTargetX(-100);
-	                    	agents.get(i).setTargetY(-100);
-	                    	
-	                    	//set target's captured status to true and increment respective agent's score
-	                    	targets.get(x).get(j).setCaptured(true);
-	                    	agents.get(i).incrementScore();
-	                        System.out.println("Target acquired by Agent " + i);
-	        			}
-	        		}
-	        	}
-        	}
+        	checkRange(i); //check if any target is in range with any agent
         	
         	//store agent's last known location for next movement
         	agents.get(i).setLastX(agents.get(i).getX());
             agents.get(i).setLastY(agents.get(i).getY());
         }
         
-        //draw in all the objects
+        drawObjects(agentW, agentH, gg); //draw all objects on screen
+    }
+    
+    //method to display all visual components on screenq
+    public void drawObjects(int agentW, int agentH, Graphics gg) {
+    	//draw in all the objects
         for (int i = 0; i < 5; i++) {
     		if (i == 0) {
     				gg.setColor(Color.GRAY);
@@ -182,6 +162,36 @@ public class ScenarioOne extends JComponent {
     					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
     				}
     		}
+    	}
+    }
+    
+    //method to check each agent's radar
+    public void checkRange(int i) {
+    	//check if any targets are within range of any agents
+    	for (int x = 0; x < targets.size(); x++) {
+        	for (int j = 0; j < targets.get(x).size(); j++) {
+        		
+        		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
+        		if((getDistance(agents.get(i), targets.get(x).get(j)) <= 50) && (!targets.get(x).get(j).getCaptured())) {
+        			System.out.println("Agent ID: " + agents.get(i).getID() + "       " + "Target ID: " + targets.get(x).get(j).getID());
+        			
+        			//check if target belongs to current agent
+        			if(targets.get(x).get(j).getID() != agents.get(i).getID()) {
+        				broadcast(agents.get(i), targets.get(x).get(j));
+        			} else {
+        				
+        				//set target's location and known location outside the playing field 
+                    	targets.get(x).get(j).setX(-100); targets.get(x).get(j).setY(-100);
+                    	agents.get(i).setTargetX(-100);
+                    	agents.get(i).setTargetY(-100);
+                    	
+                    	//set target's captured status to true and increment respective agent's score
+                    	targets.get(x).get(j).setCaptured(true);
+                    	agents.get(i).incrementScore();
+                        System.out.println("Target acquired by Agent " + i);
+        			}
+        		}
+        	}
     	}
     }
     
