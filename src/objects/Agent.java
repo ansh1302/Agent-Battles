@@ -1,8 +1,9 @@
 package objects;
 
+import java.util.ArrayList;
+
 public class Agent {
 	
-	//declare all instances of Agent object
 	private int lastX;
 	private int lastY;
     private int x;
@@ -10,8 +11,8 @@ public class Agent {
     private int directionX;
     private int directionY;
     private String direction;
-    private int targetX;
-    private int targetY;
+    private ArrayList<Integer> targetX;
+    private ArrayList<Integer> targetY;
     private int ID;
     private int score;
     
@@ -25,8 +26,8 @@ public class Agent {
     	this.direction = direction;
     	changeDirection(this.direction);
     	this.ID = id;
-    	this.targetX = -1;
-    	this.targetY = -1;
+    	this.targetX = new ArrayList<Integer>();
+    	this.targetY = new ArrayList<Integer>();
     }
     
     //accessor and mutator methods for all instances of Agent object
@@ -38,12 +39,16 @@ public class Agent {
     	score++;
     }
     
+    public int getMemLength() {
+    	return this.targetX.size();
+    }
+    
     public int getTargetX() {
-    	return this.targetX;
+    	return this.targetX.get(0);
     }
     
     public int getTargetY() {
-    	return this.targetY;
+    	return this.targetY.get(0);
     }
         
     public int getID() {
@@ -90,14 +95,6 @@ public class Agent {
     	return directionY;
     }
     
-    public void toggleXDirection() {
-    	directionX *= -1; 
-    }
-    
-    public void toggleYDirection() {
-    	directionY *= -1;
-    }
-    
     public String getDirection() {
     	return this.direction;
     }
@@ -121,26 +118,63 @@ public class Agent {
     	}
     }
     
-    public void setTargetX(int x) {
-    	this.targetX = x;
-    }
-    
-    public void setTargetY(int y) {
-    	this.targetY = y;
-    }
-    
-    public void receive(int x, int y, int targetNum) {
-    	if(targetNum == this.ID) {
-	    	this.targetX = x;
-	    	this.targetY = y;
+    public void flipDirection() {
+    	if (this.direction.equals("UP")) {
+    		this.changeDirection("DOWN");
+    	} else if (this.direction.equals("DOWN")) {
+    		this.changeDirection("UP");
+    	} else if (this.direction.equals("LEFT")) {
+    		this.changeDirection("RIGHT");
+    	} else if (this.direction.equals("RIGHT")) {
+    		this.changeDirection("LEFT");
     	}
     }
     
-    /*public int broadcastX() {
-    	return x;
+    public double getDistance(int x1, int x2, int y1, int y2) {
+    	return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2));
     }
     
-    public int broadcastY() {
-    	return y;
-    }*/
+    public boolean checkAdded(int x, int y) {
+    	for (int i = 0; i < this.targetX.size(); i++) {
+    		if ((this.targetX.get(i) == x) && (this.targetY.get(i) == y)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    public void receive(int x, int y, int targetNum) {
+    	if (targetNum == this.ID) {
+    		if (!this.checkAdded(x, y)) {
+	    		if (this.targetX.size() < 2) {
+	    			this.targetX.add(x); this.targetY.add(y);
+	    		} else {
+	    			double shortest = Double.MAX_VALUE; double distance = 0;
+	    			int shortestIndex = this.targetX.size()-1;
+	    			
+	    			for (int i = 0; i < this.targetX.size(); i++) {
+	    				distance = getDistance(x, this.targetX.get(i), y, this.targetY.get(i));
+	    				
+	    				if (distance <= shortest) {
+	    					shortest = distance;
+	    					shortestIndex = i+1;
+	    				}
+	    			}
+	    			
+	    			this.targetX.add(shortestIndex, x); this.targetY.add(shortestIndex, y);
+	    		}
+    		}
+    	}
+    }
+    
+    public void removeMem(int x, int y) {
+    	for (int i = 0; i < this.targetX.size(); i++) {
+    		if ((this.targetX.get(i) == x) && (this.targetY.get(i) == y)) {
+    			if (this.ID == 2) {
+    				System.out.println("\nRemoving: ("+x+", "+y+")");
+    			}
+    			this.targetX.remove(i); this.targetY.remove(i);
+    		}
+    	}
+    }
 }

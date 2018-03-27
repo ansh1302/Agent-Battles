@@ -1,6 +1,3 @@
-- save agent's knowledge of it's target locations in a set so after acquiring one target, it can make it's 
-way to the next closest target instead of returning to random movement
-
-- how to use private channels?
+- could further apply weighted randomizer if time permits
 
 - what is the difference between Scenario 1 and Scenario 3 in terms of implementation? :S

@@ -55,7 +55,7 @@ public class ScenarioTwo extends JComponent {
             public void run() {
                 while (true) {
                     repaint();
-                    try {Thread.sleep(100);} catch (Exception ex) {}
+                    try {Thread.sleep(75);} catch (Exception ex) {}
                 }
             }
         });
@@ -77,7 +77,7 @@ public class ScenarioTwo extends JComponent {
         	int  n = rand.nextInt(10) + 1;
         	
         	//if target's location is known to be within the boundaries of the field, send agent to its target
-        	if (agents.get(i).getTargetX() >= 0 && agents.get(i).getTargetY() >= 0) {
+        	if ((agents.get(i).getMemLength() > 0)) {
             	if(agents.get(i).getTargetX() > agents.get(i).getX()) {
             		agents.get(i).changeDirection("RIGHT");
             	}
@@ -92,7 +92,7 @@ public class ScenarioTwo extends JComponent {
             	}
             	
             //else if agent is not colliding with any boundary, give it random movement
-            } else if (!checkCollision1(agents.get(i), w, h)) {
+            } else if (!checkCollision(agents.get(i), w, h)) {
             	if (n == 1)  {
                 	agents.get(i).changeDirection("LEFT");
                 } 
@@ -108,13 +108,13 @@ public class ScenarioTwo extends JComponent {
             }
         	
         	//run the game if not all targets have been captured
-        	if (!checkEndOfGame()) {
-        		//move agent either horizontally or vertically
-            	if (agents.get(i).getDirection().equals("LEFT") || agents.get(i).getDirection().equals("RIGHT")) {
-                	agents.get(i).setX(agents.get(i).getLastX() + (agentSpeed*agents.get(i).getDirectionX()));
-                } else if (agents.get(i).getDirection().equals("UP") || agents.get(i).getDirection().equals("DOWN")) {
-                	agents.get(i).setY(agents.get(i).getLastY() + (agentSpeed*agents.get(i).getDirectionY()));
-                }
+        	if (!checkEndOfGame()) {        		
+	        	//move agent either horizontally or vertically
+	            if (agents.get(i).getDirection().equals("LEFT") || agents.get(i).getDirection().equals("RIGHT")) {
+	               	agents.get(i).setX(agents.get(i).getLastX() + (agentSpeed*agents.get(i).getDirectionX()));
+	            } else if (agents.get(i).getDirection().equals("UP") || agents.get(i).getDirection().equals("DOWN")) {
+	               	agents.get(i).setY(agents.get(i).getLastY() + (agentSpeed*agents.get(i).getDirectionY()));
+	            }
         	}
         	
         	checkRange(i); //check if any target is in range with any agent
@@ -132,32 +132,42 @@ public class ScenarioTwo extends JComponent {
     	//draw in all the objects
         for (int i = 0; i < 5; i++) {
     		if (i == 0) {
-    				gg.setColor(Color.GRAY);
-    		        gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, agentH);
+    			gg.setColor(Color.BLACK);
+		        gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, agentH);
+		        gg.setColor(Color.GRAY);
+		        gg.fillOval(agents.get(0).getX()+12, agents.get(0).getY()+12, agentW-24, agentH-24);
     				for (int j = 0; j < targets.get(i).size(); j++) {
     					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
     				}
     		} else if (i == 1) {
-    				gg.setColor(Color.RED);
-    		        gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, agentH);
+    			gg.setColor(Color.BLACK);
+		        gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, agentH);
+		        gg.setColor(Color.RED);
+		        gg.fillOval(agents.get(1).getX()+12, agents.get(1).getY()+12, agentW-24, agentH-24);
     				for (int j = 0; j < targets.get(i).size(); j++) {
     					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
     				}
     		} else if (i == 2) {
-    				gg.setColor(Color.BLUE);
-    		        gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, agentH);
+    			gg.setColor(Color.BLACK);
+		        gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, agentH);
+		        gg.setColor(Color.BLUE);
+		        gg.fillOval(agents.get(2).getX()+12, agents.get(2).getY()+12, agentW-24, agentH-24);
     				for (int j = 0; j < targets.get(i).size(); j++) {    					
     					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
     				}
     		} else if (i == 3) {
-    				gg.setColor(Color.GREEN);
-    		        gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, agentH);
+    			gg.setColor(Color.BLACK);
+		        gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, agentH);
+		        gg.setColor(Color.GREEN);
+		        gg.fillOval(agents.get(3).getX()+12, agents.get(3).getY()+12, agentW-24, agentH-24);
     				for (int j = 0; j < targets.get(i).size(); j++) {
     					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
     				}
     		} else if (i == 4) {
-    				gg.setColor(Color.YELLOW);
+    				gg.setColor(Color.BLACK);
     		        gg.fillOval(agents.get(4).getX(), agents.get(4).getY(), agentW, agentH);
+    		        gg.setColor(Color.YELLOW);
+    		        gg.fillOval(agents.get(4).getX()+12, agents.get(4).getY()+12, agentW-24, agentH-24);
     				for (int j = 0; j < targets.get(i).size(); j++) {
     					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
     				}
@@ -173,22 +183,18 @@ public class ScenarioTwo extends JComponent {
         		
         		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
         		if((getDistance(agents.get(i), targets.get(x).get(j)) <= 50) && (!targets.get(x).get(j).getCaptured())) {
-        			System.out.println("Agent ID: " + agents.get(i).getID() + "       " + "Target ID: " + targets.get(x).get(j).getID());
-        			
         			//check if target belongs to current agent
         			if(targets.get(x).get(j).getID() != agents.get(i).getID()) {
         				broadcast(agents.get(i), targets.get(x).get(j));
         			} else {
         				
         				//set target's location and known location outside the playing field 
+        				agents.get(i).removeMem(targets.get(x).get(j).getX(), targets.get(x).get(j).getY());
                     	targets.get(x).get(j).setX(-100); targets.get(x).get(j).setY(-100);
-                    	agents.get(i).setTargetX(-100);
-                    	agents.get(i).setTargetY(-100);
                     	
                     	//set target's captured status to true and increment respective agent's score
                     	targets.get(x).get(j).setCaptured(true);
                     	agents.get(i).incrementScore();
-                        System.out.println("Target acquired by Agent " + i);
         			}
         		}
         	}
@@ -209,7 +215,7 @@ public class ScenarioTwo extends JComponent {
     	return Math.sqrt(Math.pow((agent.getX()-target.getX()), 2) + Math.pow((agent.getY()-target.getY()), 2));
     }
     
-    //method to check if all targets have been acquired to signal the end of the game
+    //method to check if any agent has acquired all of its targets to signal end of game
     public boolean checkEndOfGame() {
     	for (int i = 0; i < targets.size(); i++) {
     		for (int j = 0; j < targets.get(i).size(); j++) {
@@ -222,7 +228,7 @@ public class ScenarioTwo extends JComponent {
     }
     
     //method to check for agents' collisions with boundaries and update direction accordingly
-    public boolean checkCollision1(Agent agent, int w, int h) {
+    public boolean checkCollision(Agent agent, int w, int h) {
     	if ((agent.getX()+100) >= w) {
     		agent.changeDirection("LEFT");
     		return true;
