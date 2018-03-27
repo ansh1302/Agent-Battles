@@ -9,7 +9,7 @@ public class FieldOne {
     	//create frame and specify its characteristics
         JFrame frame = new JFrame("Agent Battles");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
+        frame.setSize(1100, 1100);
         frame.getContentPane().setBackground(Color.WHITE);
         frame.setLocationRelativeTo(null);
         frame.add(new ScenarioOne());

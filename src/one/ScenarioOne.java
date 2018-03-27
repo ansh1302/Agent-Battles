@@ -29,13 +29,13 @@ public class ScenarioOne extends JComponent {
     	
     	//starting coordinates and direction
     	Random r = new Random();
-    	int coor = 100; int dir; int coorX, coorY;
+    	int dir; int coorX, coorY;
     	
     	//loop to dynamically create and initialize agents
     	for (int i = 0; i < 5; i++) {
     		dir = r.nextInt(3) + 0;
-    		agents.add(new Agent(i, coor, coor, coor, coor, directions[dir]));
-    		coor += 100;
+    		coorX = getRounded(r.nextInt(600) + 100); coorY = getRounded(r.nextInt(600) + 100);
+    		agents.add(new Agent(i, coorX, coorY, directions[dir]));
     	}
     	
     	//loop to dynamically create and initialize all targets
@@ -43,8 +43,7 @@ public class ScenarioOne extends JComponent {
     	for (int i = 0; i < 5; i++) {
     		targets.add(new ArrayList<Target>());
     		for (int j = 0; j < 5; j++) {
-    			coorX = getRounded(r.nextInt(600) + 100);
-				coorY = getRounded(r.nextInt(600) + 100);
+    			coorX = getRounded(r.nextInt(600) + 100); coorY = getRounded(r.nextInt(600) + 100);
     			targets.get(i).add(new Target(IDcounter, coorX, coorY, false));
     		}
     		IDcounter++;
@@ -55,11 +54,10 @@ public class ScenarioOne extends JComponent {
             public void run() {
                 while (true) {
                     repaint();
-                    try {Thread.sleep(75);} catch (Exception ex) {}
+                    try {Thread.sleep(100);} catch (Exception ex) {}
                 }
             }
         });
-
         animationThread.start();
     }
 
@@ -69,8 +67,7 @@ public class ScenarioOne extends JComponent {
         Random rand = new Random();
         
         //store screen width and height
-        int w = getWidth();
-        int h = getHeight();
+        int w = 800; int h = 800;
         
         //decision loop for each agent
         for (int i = 0; i < agents.size(); i++) {
@@ -120,8 +117,7 @@ public class ScenarioOne extends JComponent {
         	checkRange(i); //check if any target is in range with any agent
         	
         	//store agent's last known location for next movement
-        	agents.get(i).setLastX(agents.get(i).getX());
-            agents.get(i).setLastY(agents.get(i).getY());
+        	agents.get(i).setLastX(agents.get(i).getX()); agents.get(i).setLastY(agents.get(i).getY());
         }
         
         drawObjects(agentW, agentH, gg); //draw all objects on screen
@@ -183,6 +179,7 @@ public class ScenarioOne extends JComponent {
         		
         		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
         		if((getDistance(agents.get(i), targets.get(x).get(j)) <= 50) && (!targets.get(x).get(j).getCaptured())) {
+        			
         			//check if target belongs to current agent
         			if(targets.get(x).get(j).getID() != agents.get(i).getID()) {
         				broadcast(agents.get(i), targets.get(x).get(j));

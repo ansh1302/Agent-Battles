@@ -7,7 +7,6 @@ public class Target {
 	private int y;
 	private int ID;
 	private boolean captured;
-	private boolean broadcasted;
 	
 	//constructor to initialize instances of Target object
 	public Target(int id, int x, int y, boolean captured) {
@@ -15,10 +14,9 @@ public class Target {
 		this.x = x;
 		this.y = y;
 		this.captured = captured;
-		this.broadcasted = false;
 	}
 	
-	//accessor and mutator methods for all instances of Target object
+	//getter and setter methods for all instances of Target object
 	public int getX() {
 		return x;
 	}
@@ -43,15 +41,7 @@ public class Target {
 		return captured;
 	}
 	
-	public boolean getBroadcasted() {
-		return this.broadcasted;
-	}
-	
 	public void setCaptured(boolean captured) {
 		this.captured = true;
-	}
-	
-	public void setBroadcasted(Boolean broadcasted) {
-		this.broadcasted = broadcasted;
 	}
 }
