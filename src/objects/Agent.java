@@ -16,6 +16,9 @@ public class Agent {
     private ArrayList<Integer> targetY;
     private int ID;
     private int score;
+    private int width;
+    private int height;
+    private int speed;
     
     //constructor to initialize all instances of Agent object
     public Agent(int id, int x, int y, String direction) {
@@ -29,6 +32,9 @@ public class Agent {
     	this.targetX = new ArrayList<Integer>();
     	this.targetY = new ArrayList<Integer>();
     	changeDirection(this.direction);
+    	this.width = 50;
+    	this.height = 50;
+    	this.speed = 50;
     }
     
     //getter and setter methods for all instances of Agent object
@@ -100,6 +106,18 @@ public class Agent {
     	return this.direction;
     }
     
+    public int getWidth() {
+    	return this.width;
+    }
+    
+    public int getHeight() {
+    	return this.height;
+    }
+    
+    public int getSpeed() {
+    	return this.speed;
+    }
+    
     //method to assign the change in agent's direction
     public void changeDirection(String command) {
     	if (command.equals("UP")) {
@@ -114,19 +132,6 @@ public class Agent {
     	} else if (command.equals("RIGHT")) {
     		direction = "RIGHT";
     		directionX = 1;
-    	}
-    }
-    
-    //method to flip the agent's current direction
-    public void flipDirection() {
-    	if (this.direction.equals("UP")) {
-    		this.changeDirection("DOWN");
-    	} else if (this.direction.equals("DOWN")) {
-    		this.changeDirection("UP");
-    	} else if (this.direction.equals("LEFT")) {
-    		this.changeDirection("RIGHT");
-    	} else if (this.direction.equals("RIGHT")) {
-    		this.changeDirection("LEFT");
     	}
     }
     

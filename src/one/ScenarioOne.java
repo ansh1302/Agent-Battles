@@ -13,9 +13,9 @@ public class ScenarioOne extends JComponent {
 
 	/*CHECK IF THE COMMON METHODS FROM EACH SCENARIO CLASS CAN BE PUT INTO ONE CLASS AND HAVE THE SAME INSTANCE USED EVERYWHERE*/
 	//initialize agent's physical characteristics
-    int agentW = 50;
-    int agentH = 50;
-    int agentSpeed = 50;
+    final int agentW = 50;
+    final int agentH = 50;
+    final int agentSpeed = 50;
     
     //declare array lists to store all agents and respective targets
     ArrayList<Agent> agents = new ArrayList<Agent>();

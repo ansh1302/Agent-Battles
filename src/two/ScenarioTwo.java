@@ -18,12 +18,11 @@ public class ScenarioTwo extends JComponent {
     ArrayList<Agent> agents = new ArrayList<Agent>();
     //ArrayList<Target> targets = new ArrayList<Target>();
     ArrayList<ArrayList<Target>> targets = new ArrayList<ArrayList<Target>>();
+  //array of direction strings
+	String[] directions = {"UP", "DOWN", "LEFT", "RIGHT"};
 
     //constructor for the field's canvas
     public ScenarioTwo() {
-    	//array of direction strings
-    	String[] directions = {"UP", "DOWN", "LEFT", "RIGHT"};
-    	
     	//starting coordinates and direction
     	Random r = new Random();
     	int dir; int coorX, coorY;
@@ -51,7 +50,7 @@ public class ScenarioTwo extends JComponent {
             public void run() {
                 while (true) {
                     repaint();
-                    try {Thread.sleep(100);} catch (Exception ex) {}
+                    try {Thread.sleep(250);} catch (Exception ex) {}
                 }
             }
         });
@@ -102,7 +101,11 @@ public class ScenarioTwo extends JComponent {
             }
         	
         	//run the game if not all targets have been captured
-        	if (!checkEndOfGame() /*&& !interAgentCollision(agents.get(i))*/) {
+        	if (!checkEndOfGame()) {
+        		if (interAgentIntersection(agents.get(i), agents.get(i).getDirection())) {
+        			findNewDirection(agents.get(i));
+        		}
+        		
 	        	//move agent either horizontally or vertically
 	            if (agents.get(i).getDirection().equals("LEFT") || agents.get(i).getDirection().equals("RIGHT")) {
 	               	agents.get(i).setX(agents.get(i).getLastX() + (agents.get(i).getSpeed()*agents.get(i).getDirectionX()));
@@ -240,28 +243,61 @@ public class ScenarioTwo extends JComponent {
     	}
     }
     
-    /*public boolean interAgentCollision(Agent agent) {
+    public boolean interAgentIntersection(Agent agent, String direction) {
     	for (int i = 0; i < agents.size(); i++) {
-    		if (getDistance(agent.getX(), agents.get(i).getX(), agent.getY(), agents.get(i).getY()) < 50) {
-    			if (crossCoordinates(agent, agents.get(i))) {
-    				return true;
-    			}
+    		if (agent.getID() == agents.get(i).getID()) {
+    			continue;
+    		} else {
+	    		if (checkIntersection(agent, agents.get(i), direction)) {
+	    			return true;
+	    		}
     		}
     	}
     	return false;
-    }*/
+    }
     
-    public boolean crossCoordinates(Agent agent1, Agent agent2) {
+    public boolean checkIntersection(Agent agent, Agent agent2, String direction) {
+    	double circle1X = 0, circle1Y = 0;
+    	double circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
+    	double circle2X = agent2.getX();
+    	double circle2Y = agent2.getY();
     	
-    	int distSq = (x1 - x2) * (x1 - x2) +
-				(y1 - y2) * (y1 - y2);
-    	int radSumSq = (r1 + r2) * (r1 + r2);
-    	if (distSq == radSumSq)
-    		return true;
-    	else if (distSq > radSumSq)
-    		return -1;
-    	else
-    		return 0;
+    	if (direction.equals("LEFT")) {
+    		circle1X = agent.getLastX() + (agent.getSpeed()*-1) - 5;
+    	} else if (direction.equals("RIGHT")) {
+    		circle1X = agent.getLastX() + (agent.getSpeed()*1) + 5;
+    	} else if (direction.equals("UP")) {
+    		circle1Y = agent.getLastY() + (agent.getSpeed()*-1) - 5;
+    	} else if (direction.endsWith("DOWN")) {
+    		circle1Y = agent.getLastY() + (agent.getSpeed()*1) + 5;
+    	}
+    	
+    	// dx and dy are the vertical and horizontal distances
+        double dx = circle2X - circle1X;
+        double dy = circle2Y - circle1Y;
+
+        // Determine the straight-line distance between centers.
+        double d = Math.sqrt((dy * dy) + (dx * dx));
+
+        // Check Intersections
+        if (d > (circle1Radius + circle2Radius)) {
+            // No Solution. Circles do not intersect
+            return false;
+        } else if (d < Math.abs(circle1Radius - circle2Radius)) {
+            // No Solution. one circle is contained in the other
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public void findNewDirection(Agent agent) {
+    	for (int i = 0; i < directions.length; i++) {
+    		if (!interAgentIntersection(agent, directions[i]) && !checkCollision(agent, 800, 800)) {
+    			agent.changeDirection(directions[i]);
+    			break;
+    		}
+    	}
     }
     
     //method to broadcast target location to all other agents
