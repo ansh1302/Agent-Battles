@@ -1,9 +1,0 @@
-- could further apply weighted randomizer if time permits
-
-- what is the difference between Scenario 1 and Scenario 3 in terms of implementation? :S
-
-
-things to discuss:
-- for private channels, do we wanna just create methods to facilitate it and never call those methods? because there is no use for them
-- how to go about scenario 3
-- EXACT FORMAT OF CSV FILES

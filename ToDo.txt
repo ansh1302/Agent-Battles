@@ -1,0 +1,27 @@
+1. Your simulation generates a CSV file with the following columns. The name of this CSV is: G[your group number]_1.csv
+a. Scenario number (1,2 or 3)
+b. Iteration number  (GLOBAL VARIABLE TO TRACK ITERATION NUMBER ALREADY DEFINED SO JUST USE THAT.......1 iteration = 1 whole game)
+c. Agent number (IDENTIFIED BY AGENT ID, ALREADY IMPLETEMENTED SO DON'T CREATE ANYTHING NEW)
+d. Number of collected targets by the agent (IDENTIFIED BY AGENT SCORE, ALREADY TRACKING IT SO DON'T CREATE ANYTHING NEW)
+e. Number of steps taken by the agent at the end of iteration (IDENTIFIED BY STEPS, ALREADY TRACKING IT SO DON'T CREATE ANYTHING NEW)
+f. Agent happiness: d/(e+1)
+g. Maximum happiness in each iteration
+h. Minimum happiness in each iteration
+i. Average happiness in each iteration
+j. Standard deviation of happiness in each iteration
+k. Agent competitiveness: (f-h)/(g-h)
+
+
+2. Your simulation generates another csv file from the previous CSV with the following columns. The name of this CSV is: G[your group number]_2.csv
+a. Scenario number (1,2 and 3)
+b. Average of column “i” for the iterations of same scenario
+c. Average of column “k” for the iterations of same scenario
+
+
+3. A simple graphical interface is necessary for the simulation.
+
+
+4. We expect your simulation is capable of many iterations (10 to 100 times) with random setup.
+
+
+5. Deliverables: Two above mentioned CSV file in right format> since a script will read and process the files, any other format will not be accepted and marks will be deducted. You has to send the files before your demo via blackboard messaging.

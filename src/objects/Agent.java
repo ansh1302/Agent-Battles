@@ -19,6 +19,7 @@ public class Agent {
     private int width;
     private int height;
     private int speed;
+    private int steps;
     
     //constructor to initialize all instances of Agent object
     public Agent(int id, int x, int y, String direction) {
@@ -35,11 +36,20 @@ public class Agent {
     	this.width = 50;
     	this.height = 50;
     	this.speed = 50;
+    	this.steps = 0;
     }
     
     //getter and setter methods for all instances of Agent object
     public int getScore() {
     	return score;
+    }
+    
+    public int getSteps() {
+    	return this.steps;
+    }
+    
+    public void addStep() {
+    	this.steps += 1;
     }
     
     public void incrementScore() {

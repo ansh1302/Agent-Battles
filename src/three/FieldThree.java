@@ -1,9 +1,9 @@
-package two;
+package three;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class FieldTwo {
+public class FieldThree {
     public static void main(String[] args) {
     	
     	//create frame and specify its characteristics
@@ -12,7 +12,7 @@ public class FieldTwo {
         frame.setSize(800, 800);
         frame.getContentPane().setBackground(Color.WHITE);
         frame.setLocationRelativeTo(null);
-        frame.add(new ScenarioTwo());
+        frame.add(new ScenarioThree());
         frame.setVisible(true);
     }
 }

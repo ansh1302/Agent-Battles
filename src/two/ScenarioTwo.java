@@ -20,6 +20,8 @@ public class ScenarioTwo extends JComponent {
     ArrayList<ArrayList<Target>> targets = new ArrayList<ArrayList<Target>>();
   //array of direction strings
 	String[] directions = {"UP", "DOWN", "LEFT", "RIGHT"};
+	
+	int iteration = 1;
 
     //constructor for the field's canvas
     public ScenarioTwo() {
@@ -112,6 +114,7 @@ public class ScenarioTwo extends JComponent {
 	            } else if (agents.get(i).getDirection().equals("UP") || agents.get(i).getDirection().equals("DOWN")) {
 	               	agents.get(i).setY(agents.get(i).getLastY() + (agents.get(i).getSpeed()*agents.get(i).getDirectionY()));
 	            }
+	            agents.get(i).addStep();
         	}
         	
         	checkRange(i); //check if any target is in range with any agent
@@ -172,6 +175,8 @@ public class ScenarioTwo extends JComponent {
     
     //method to check each agent's radar
     public void checkRange(int i) {
+    	Random r = new Random();
+    	
     	//check if any targets are within range of any agents
     	for (int x = 0; x < targets.size(); x++) {
         	for (int j = 0; j < targets.get(x).size(); j++) {
@@ -181,7 +186,17 @@ public class ScenarioTwo extends JComponent {
         			
         			//check if target belongs to current agent
         			if(targets.get(x).get(j).getID() != agents.get(i).getID()) {
-        				broadcast(agents.get(i), targets.get(x).get(j));
+        				//broadcast(agents.get(i), targets.get(x).get(j));
+        				if ((r.nextInt(2) + 1) == 1) { //if 1, broadcast it, otherwise send privately
+        					broadcast(agents.get(i), targets.get(x).get(j));
+        				} else {
+        					for (int g = 0; g < agents.size(); g++) {
+        						if (agents.get(g).getID() == targets.get(x).get(j).getID()) {
+        							sendPrivately(agents.get(g), targets.get(x).get(j));
+        							break;
+        						}
+        					}
+        				}
         			} else {
         				
         				//set target's location and known location outside the playing field 
@@ -361,6 +376,14 @@ public class ScenarioTwo extends JComponent {
     		if (agents.get(i).getID() == agent.getID()) { //do not broadcast to yourself
     			continue;
     		} else {
+    			agents.get(i).receive(target.getX(), target.getY(), target.getID());
+    		}
+    	}
+    }
+    
+    public void sendPrivately(Agent agent, Target target) {
+    	for (int i = 0; i < agents.size(); i++) {
+    		if (agents.get(i).getID() == agent.getID()) {
     			agents.get(i).receive(target.getX(), target.getY(), target.getID());
     		}
     	}
