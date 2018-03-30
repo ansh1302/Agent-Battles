@@ -13,20 +13,16 @@ public class ScenarioOne extends JComponent {
 
 	/*CHECK IF THE COMMON METHODS FROM EACH SCENARIO CLASS CAN BE PUT INTO ONE CLASS AND HAVE THE SAME INSTANCE USED EVERYWHERE*/
 	//initialize agent's physical characteristics
-    final int agentW = 50;
-    final int agentH = 50;
-    final int agentSpeed = 50;
     
-    //declare array lists to store all agents and respective targets
+	//declare array lists to store all agents and respective targets
     ArrayList<Agent> agents = new ArrayList<Agent>();
     //ArrayList<Target> targets = new ArrayList<Target>();
     ArrayList<ArrayList<Target>> targets = new ArrayList<ArrayList<Target>>();
+  //array of direction strings
+	String[] directions = {"UP", "DOWN", "LEFT", "RIGHT"};
 
     //constructor for the field's canvas
     public ScenarioOne() {
-    	//array of direction strings
-    	String[] directions = {"UP", "DOWN", "LEFT", "RIGHT"};
-    	
     	//starting coordinates and direction
     	Random r = new Random();
     	int dir; int coorX, coorY;
@@ -105,22 +101,21 @@ public class ScenarioOne extends JComponent {
             }
         	
         	//run the game if not all targets have been captured
-        	if (!checkEndOfGame()) {        		
-	        	//move agent either horizontally or vertically
+        	if (!checkEndOfGame()) {
+        		//move agent either horizontally or vertically
 	            if (agents.get(i).getDirection().equals("LEFT") || agents.get(i).getDirection().equals("RIGHT")) {
-	               	agents.get(i).setX(agents.get(i).getLastX() + (agentSpeed*agents.get(i).getDirectionX()));
+	               	agents.get(i).setX(agents.get(i).getLastX() + (agents.get(i).getSpeed()*agents.get(i).getDirectionX()));
 	            } else if (agents.get(i).getDirection().equals("UP") || agents.get(i).getDirection().equals("DOWN")) {
-	               	agents.get(i).setY(agents.get(i).getLastY() + (agentSpeed*agents.get(i).getDirectionY()));
+	               	agents.get(i).setY(agents.get(i).getLastY() + (agents.get(i).getSpeed()*agents.get(i).getDirectionY()));
 	            }
         	}
         	
         	checkRange(i); //check if any target is in range with any agent
-        	
         	//store agent's last known location for next movement
         	agents.get(i).setLastX(agents.get(i).getX()); agents.get(i).setLastY(agents.get(i).getY());
         }
         
-        drawObjects(agentW, agentH, gg); //draw all objects on screen
+        drawObjects(50, 50, gg); //draw all objects on screen
     }
     
     //method to display all visual components on screen
@@ -178,7 +173,7 @@ public class ScenarioOne extends JComponent {
         	for (int j = 0; j < targets.get(x).size(); j++) {
         		
         		//broadcast target if agent lands in range and IDs don't match, otherwise acquire target
-        		if((getDistance(agents.get(i), targets.get(x).get(j)) <= 50) && (!targets.get(x).get(j).getCaptured())) {
+        		if((getDistance(agents.get(i).getX(), targets.get(x).get(j).getX(), agents.get(i).getY(), targets.get(x).get(j).getY()) <= 50) && (!targets.get(x).get(j).getCaptured())) {
         			
         			//check if target belongs to current agent
         			if(targets.get(x).get(j).getID() != agents.get(i).getID()) {
@@ -208,8 +203,8 @@ public class ScenarioOne extends JComponent {
     }
     
     //method to calculate the distance between two objects
-    public double getDistance(Agent agent, Target target) {
-    	return Math.sqrt(Math.pow((agent.getX()-target.getX()), 2) + Math.pow((agent.getY()-target.getY()), 2));
+    public double getDistance(int x1, int x2, int y1, int y2) {
+    	return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2));
     }
     
     //method to check if any agent has acquired all of its targets to signal end of game
