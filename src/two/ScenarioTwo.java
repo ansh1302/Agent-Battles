@@ -102,7 +102,7 @@ public class ScenarioTwo extends JComponent {
         	
         	//run the game if not all targets have been captured
         	if (!checkEndOfGame()) {
-        		/*if (interAgentIntersection(agents.get(i), agents.get(i).getDirection())) {
+        		/*if (interAgentIntersection(agents.get(i), agents.get(i).getDirection()) || futureInterAgentIntersection(agents.get(i), agents.get(i).getDirection())) {
         			findNewDirection(agents.get(i));
         		}*/
         		
@@ -115,7 +115,6 @@ public class ScenarioTwo extends JComponent {
         	}
         	
         	checkRange(i); //check if any target is in range with any agent
-        	
         	//store agent's last known location for next movement
         	agents.get(i).setLastX(agents.get(i).getX()); agents.get(i).setLastY(agents.get(i).getY());
         }
@@ -254,13 +253,24 @@ public class ScenarioTwo extends JComponent {
     		}
     	}
     	return false;
-    }*/
+    }
     
-    /*public boolean checkIntersection(Agent agent, Agent agent2, String direction) {
-    	double circle1X = 0, circle1Y = 0;
+    public boolean futureInterAgentIntersection(Agent agent, String direction) {
+    	for (int i = 0; i < agents.size(); i++) {
+    		if (agent.getID() == agents.get(i).getID()) {
+    			continue;
+    		} else {
+	    		if (checkFutureIntersection(agent, agents.get(i), direction, agents.get(i).getDirection())) {
+	    			return true;
+	    		}
+    		}
+    	}
+    	return false;
+    }
+    
+    public boolean checkFutureIntersection(Agent agent, Agent agent2, String direction, String direction2) {
+    	double circle1X = 0, circle1Y = 0, circle2X = 0, circle2Y = 0;
     	double circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
-    	double circle2X = agent2.getX();
-    	double circle2Y = agent2.getY();
     	
     	if (direction.equals("LEFT")) {
     		circle1X = agent.getLastX() + (agent.getSpeed()*-1) - 5;
@@ -270,6 +280,16 @@ public class ScenarioTwo extends JComponent {
     		circle1Y = agent.getLastY() + (agent.getSpeed()*-1) - 5;
     	} else if (direction.endsWith("DOWN")) {
     		circle1Y = agent.getLastY() + (agent.getSpeed()*1) + 5;
+    	}
+    	
+    	if (direction2.equals("LEFT")) {
+    		circle2X = agent.getLastX() + (agent.getSpeed()*-1) - 5;
+    	} else if (direction2.equals("RIGHT")) {
+    		circle2X = agent.getLastX() + (agent.getSpeed()*1) + 5;
+    	} else if (direction2.equals("UP")) {
+    		circle2Y = agent.getLastY() + (agent.getSpeed()*-1) - 5;
+    	} else if (direction2.endsWith("DOWN")) {
+    		circle2Y = agent.getLastY() + (agent.getSpeed()*1) + 5; 
     	}
     	
     	// dx and dy are the vertical and horizontal distances
@@ -285,15 +305,50 @@ public class ScenarioTwo extends JComponent {
             return false;
         } else if (d < Math.abs(circle1Radius - circle2Radius)) {
             // No Solution. one circle is contained in the other
-            return false;
+            return true;
         } else {
             return true;
         }
-    }*/
+    }
     
-    /*public void findNewDirection(Agent agent) {
+    public boolean checkIntersection(Agent agent, Agent agent2, String direction) {
+    	double circle1X = 0, circle1Y = 0;
+    	double circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
+    	double circle2X = agent2.getX();
+    	double circle2Y = agent2.getY();
+    	
+    	if (direction.equals("LEFT")) {
+    		circle1X = agent.getLastX() + (agent.getSpeed()*-1);
+    	} else if (direction.equals("RIGHT")) {
+    		circle1X = agent.getLastX() + (agent.getSpeed()*1);
+    	} else if (direction.equals("UP")) {
+    		circle1Y = agent.getLastY() + (agent.getSpeed()*-1);
+    	} else if (direction.endsWith("DOWN")) {
+    		circle1Y = agent.getLastY() + (agent.getSpeed()*1);
+    	}
+    	
+    	// dx and dy are the vertical and horizontal distances
+        double dx = circle2X - circle1X;
+        double dy = circle2Y - circle1Y;
+
+        // Determine the straight-line distance between centers.
+        double d = Math.sqrt((dy * dy) + (dx * dx));
+
+        // Check Intersections
+        if (d > (circle1Radius + circle2Radius)) {
+            // No Solution. Circles do not intersect
+            return false;
+        } else if (d < Math.abs(circle1Radius - circle2Radius)) {
+            // No Solution. one circle is contained in the other
+            return true;
+        } else {
+            return true;
+        }
+    }
+    
+    public void findNewDirection(Agent agent) {
     	for (int i = 0; i < directions.length; i++) {
-    		if (!interAgentIntersection(agent, directions[i]) && !checkCollision(agent, 800, 800)) {
+    		if (!interAgentIntersection(agent, directions[i]) && !futureInterAgentIntersection(agent, directions[i]) && !checkCollision(agent, 800, 800)) {
     			agent.changeDirection(directions[i]);
     			break;
     		}
