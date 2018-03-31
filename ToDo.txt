@@ -6,8 +6,4 @@ c. Average of column “k” for the iterations of same scenario
 
 3. A simple graphical interface is necessary for the simulation.
 
-
-4. We expect your simulation is capable of many iterations (10 to 100 times) with random setup.
-
-
-5. Deliverables: Two above mentioned CSV file in right format> since a script will read and process the files, any other format will not be accepted and marks will be deducted. You has to send the files before your demo via blackboard messaging.
+4. inter-agent collision
