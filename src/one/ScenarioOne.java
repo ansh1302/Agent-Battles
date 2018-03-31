@@ -20,6 +20,7 @@ public class ScenarioOne extends JComponent {
     ArrayList<ArrayList<Target>> targets = new ArrayList<ArrayList<Target>>();
   //array of direction strings
 	String[] directions = {"UP", "DOWN", "LEFT", "RIGHT"};
+	double[] happy_array = new double[5]; // required for CSV
 	
 	int iteration = 1;
 
@@ -261,4 +262,170 @@ public class ScenarioOne extends JComponent {
     		}
     	}
     }
+	public void generateCSVValues() throws IOException {
+		double max_happy = 0;
+		double min_happy = 100;
+		for (int i = 0; i < agents.size(); i++) {
+			double col_d = agents.get(i).getScore(); // Treasures found by agent
+			double col_e = agents.get(i).getSteps(); // Steps taken by agent
+			double col_f = (col_d / (col_e + 1)); // Agent Happiness
+
+			happy_array[i] = col_f;
+
+			//get max happiness
+			if (col_f > max_happy) {
+				max_happy = col_f;
+			}
+
+			//get min happiness
+			if (col_f < min_happy) {
+				min_happy = col_f;
+			}
+		}
+		double col_g = max_happy; // Max Happiness
+		double col_h = min_happy; // Min Happiness
+		double col_i = getMean(); // Average Happiness
+		double col_j = getStdDev(); // Standard Deviation of Happiness
+		outputToCSV(col_g, col_h, col_i, col_j);
+	}
+
+	public void outputToCSV( double col_g, double col_h, double col_i, double col_j) throws IOException {
+		double col_a = 1;
+
+		FileWriter fileWriter = null;
+		try {
+			String filename = "G11_1.csv";
+			fileWriter = new FileWriter(filename, true);
+			fileWriter.append("Scenario");
+			fileWriter.append(",");
+			fileWriter.append("Iteration");
+			fileWriter.append(",");
+			fileWriter.append("Agent");
+			fileWriter.append(",");
+			fileWriter.append("# targets collected");
+			fileWriter.append(",");
+			fileWriter.append("# of steps");
+			fileWriter.append(",");
+			fileWriter.append("Happiness");
+			fileWriter.append(",");
+			fileWriter.append("Maximum Happiness");
+			fileWriter.append(",");
+			fileWriter.append("Minimum Happiness");
+			fileWriter.append(",");
+			fileWriter.append("Average Happiness");
+			fileWriter.append(",");
+			fileWriter.append("Standard Deviation on Happiness");
+			fileWriter.append(",");
+			fileWriter.append("Agent Competitiveness");
+			fileWriter.append(",");
+			fileWriter.append("\n");
+
+			//Scenario
+			for (int i = 0; i < agents.size(); i++)
+			{
+				fileWriter.append(Double.toString(col_a));
+				fileWriter.append(",");
+
+				double col_b = iteration;
+				fileWriter.append((Double.toString(col_b)));
+				fileWriter.append(",");
+
+				double col_c = (agents.get(i).getID() + 1);
+				fileWriter.append(Double.toString(col_c));
+				fileWriter.append(",");
+
+				double col_d = (agents.get(i).getScore());    // col_d = Number of collected targets by the agent
+				fileWriter.append(Double.toString(col_d));
+				fileWriter.append(",");
+
+				double col_e = (agents.get(i).getSteps());    // col_e = Number of steps taken by the agent at the end of the iteration
+				fileWriter.append(Double.toString(col_e));
+				fileWriter.append(",");
+				double col_f = (col_d / (col_e + 1));         // col_f = agent happiness
+
+				fileWriter.append(Double.toString(col_f));
+				fileWriter.append(",");
+
+				fileWriter.append(Double.toString(col_g));   // col_g = max happiness for each iteration
+				fileWriter.append(",");
+
+				fileWriter.append(Double.toString(col_h));  // col_h = min happiness for each iteration
+				fileWriter.append(",");
+
+				fileWriter.append(Double.toString(col_i));  // col_i = avg happiness for each iteration
+				fileWriter.append(",");
+
+				fileWriter.append(Double.toString(col_j));  //col_j = std dev of happiness in each iteration
+				fileWriter.append(",");
+
+				double col_k = ((col_f - col_h) / (col_g - col_h)); // col_k = agent competitiveness
+				fileWriter.append(Double.toString(col_k));
+				fileWriter.append(",");
+				fileWriter.append("\n");
+			}
+		}
+		catch(Exception e){
+			System.out.println("Error in CSVFileWriter!");
+			e.printStackTrace();
+		} finally{
+			try {
+				fileWriter.flush();
+				fileWriter.close();
+			} catch (IOException e) {
+				System.out.println("Error while flushing/closing fileWriter!");
+				e.printStackTrace();
+			}
+		}
+		String fileName2 = "G11_2.csv";
+
+		FileWriter fileWriter1 = new FileWriter(fileName2, true);
+		fileWriter1.append("Scenario");
+		fileWriter1.append(",");
+		fileWriter1.append("Average Happiness");
+		fileWriter1.append(",");
+		fileWriter1.append("Agent Competitiveness");
+		fileWriter1.append(",");
+		fileWriter1.append("\n");
+
+		for (int i = 0; i < agents.size(); i++) {
+
+			fileWriter1.append(Double.toString(col_a));
+			fileWriter1.append(",");
+
+			fileWriter1.append(Double.toString(col_i));
+			fileWriter1.append(",");
+
+			double col_d = (agents.get(i).getScore());
+			double col_e = (agents.get(i).getSteps());
+			double col_f = (col_d / (col_e + 1));
+			double col_k = ((col_f - col_h)/(col_g - col_h));
+			fileWriter1.append(Double.toString(col_k));
+			fileWriter1.append(",");
+			fileWriter1.append("\n");
+		}
+		fileWriter1.flush();
+		fileWriter1.close();
+	}
+
+	// Stat Functions for CSV Values
+	public double getMean() {
+		double sum = 0.0;
+		for(double a : happy_array)
+			sum += a;
+		return sum/agents.size();
+	}
+
+	//determine variance
+	public double getVariance() {
+		double mean = getMean();
+		double temp = 0;
+		for(double a :happy_array)
+			temp += (a-mean)*(a-mean);
+		return temp/(agents.size()-1);
+	}
+
+	//determine standard deviation of happiness
+	public double getStdDev() {
+		return Math.sqrt(getVariance());
+	}
 }
