@@ -109,18 +109,15 @@ public class ScenarioOne extends JComponent {
 					agents.get(i).changeDirection("DOWN");
 				}
 
-				//else if agent is not colliding with any boundary, give it random movement
+			//else if agent is not colliding with any boundary, give it random movement
 			} else if (!checkCollision(agents.get(i), w, h)) {
-				if (n == 1)  {
+				if (n == 1) {
 					agents.get(i).changeDirection("LEFT");
-				}
-				else if (n == 2)  {
+				} else if (n == 2) {
 					agents.get(i).changeDirection("RIGHT");
-				}
-				else if (n == 3)  {
+				} else if (n == 3) {
 					agents.get(i).changeDirection("UP");
-				}
-				else if (n == 4) {
+				} else if (n == 4) {
 					agents.get(i).changeDirection("DOWN");
 				}
 			}
@@ -212,9 +209,7 @@ public class ScenarioOne extends JComponent {
 						} else { //tell the truth
 							broadcast(agents.get(i), targets.get(x).get(j), true);
 						}
-						
 					} else { //if target does not belong to current agent
-						
 						//set target's location and known location outside the playing field
 						agents.get(i).removeMem(targets.get(x).get(j).getX(), targets.get(x).get(j).getY());
 						targets.get(x).get(j).setX(-100); targets.get(x).get(j).setY(-100);
