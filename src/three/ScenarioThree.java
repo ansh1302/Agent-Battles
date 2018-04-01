@@ -30,9 +30,9 @@ public class ScenarioThree extends JComponent {
 		//GUI runnable method
 		Thread animationThread = new Thread(new Runnable() {
 			public void run() {
-				while (!checkEndOfGame() && (iteration <= 10)) {
+				while (iteration <= 100) {
 					repaint();
-					try {Thread.sleep(200);} catch (Exception ex) {}
+					try {Thread.sleep(0);} catch (Exception ex) {}
 					if (checkEndOfGame()) {
 						try {
 							generateCSVValues();
@@ -42,6 +42,7 @@ public class ScenarioThree extends JComponent {
 						restartGame();
 					}
 				}
+				System.out.println("exited the run loop");
 			}
 		});
 		animationThread.start();
@@ -76,6 +77,7 @@ public class ScenarioThree extends JComponent {
 	public void restartGame() {
 		agents.clear(); targets.clear();
 		happy_array = new double[5];
+		System.out.println(iteration);
 		iteration++;
 		populateObjects();
 	}
