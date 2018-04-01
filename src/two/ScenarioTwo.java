@@ -357,6 +357,7 @@ public class ScenarioTwo extends JComponent {
 		}
 	}
 	
+	//method to find new direction BUT it cannot be the restricted direction
 	public void findNewDirection(Agent agent, String restricted) {
 		shuffleArray(directions);
 		for (int i = 0; i < directions.length; i++) {
