@@ -1,6 +1,7 @@
 package two;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.io.*;
 import java.awt.*;
 import javax.swing.JComponent;
@@ -11,8 +12,8 @@ import objects.Target;
 public class ScenarioTwo extends JComponent {
 
 	/*CHECK IF THE COMMON METHODS FROM EACH SCENARIO CLASS CAN BE PUT INTO ONE CLASS AND HAVE THE SAME INSTANCE USED EVERYWHERE*/
-	//initialize agent's physical characteristics
-
+	//GROUP TOGETHER METHODS THAT PERFORM SIMILAR FUNCTIONS
+	
 	//declare array lists to store all agents and respective targets
 	ArrayList<Agent> agents = new ArrayList<Agent>();
 	//ArrayList<Target> targets = new ArrayList<Target>();
@@ -31,7 +32,7 @@ public class ScenarioTwo extends JComponent {
 			public void run() {
 				while (!checkEndOfGame() && (iteration <= 10)) {
 					repaint();
-					try {Thread.sleep(250);} catch (Exception ex) {}
+					try {Thread.sleep(150);} catch (Exception ex) {}
 					if (checkEndOfGame()) {
 						try {
 							generateCSVValues();
@@ -124,9 +125,9 @@ public class ScenarioTwo extends JComponent {
 
 			//run the game if not all targets have been captured
 			if (!checkEndOfGame()) {
-				/*if (interAgentIntersection(agents.get(i), agents.get(i).getDirection()) || futureInterAgentIntersection(agents.get(i), agents.get(i).getDirection())) {
+				if (futureInterAgentIntersection(agents.get(i), agents.get(i).getDirection())) {
     				findNewDirection(agents.get(i));
-    			}*/
+    			}
 				
 				//move agent either horizontally or vertically
 				if (agents.get(i).getDirection().equals("LEFT") || agents.get(i).getDirection().equals("RIGHT")) {
@@ -255,118 +256,74 @@ public class ScenarioTwo extends JComponent {
     	return true;
     }
     
-    /*public boolean interAgentIntersection(Agent agent, String direction) {
-	for (int i = 0; i < agents.size(); i++) {
-		if (agent.getID() == agents.get(i).getID()) {
-			continue;
-		} else {
-    		if (checkIntersection(agent, agents.get(i), direction)) {
-    			return true;
-    		}
+    //method to check future intersection with all other agents
+    public boolean futureInterAgentIntersection(Agent agent, String direction) {
+		for (int i = 0; i < agents.size(); i++) {
+			if (agent.getID() == agents.get(i).getID()) {
+				continue;
+			} else {
+	    		if (checkFutureIntersection(agent, agents.get(i), direction, agents.get(i).getDirection())) {
+	    			return true;
+	    		}
+			}
+		}
+		return false;
+	}
+
+    //method to calculate whether two objects intersect or not
+	public boolean checkFutureIntersection(Agent agent, Agent agent2, String direction, String direction2) {
+		double circle1X = agent.getX(), circle1Y = agent.getY(), circle2X = agent2.getX(), circle2Y = agent2.getY();
+		double circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
+		
+		if (direction.equals("LEFT")) {
+			circle1X = agent.getLastX() + (agent.getSpeed()*-1) ;
+		} else if (direction.equals("RIGHT")) {
+			circle1X = agent.getLastX() + (agent.getSpeed()*1);
+		} else if (direction.equals("UP")) {
+			circle1Y = agent.getLastY() + (agent.getSpeed()*-1);
+		} else if (direction.endsWith("DOWN")) {
+			circle1Y = agent.getLastY() + (agent.getSpeed()*1);
+		}
+		
+		if (direction2.equals("LEFT")) {
+			circle2X = agent.getLastX() + (agent.getSpeed()*-1);
+		} else if (direction2.equals("RIGHT")) {
+			circle2X = agent.getLastX() + (agent.getSpeed()*1);
+		} else if (direction2.equals("UP")) {
+			circle2Y = agent.getLastY() + (agent.getSpeed()*-1);
+		} else if (direction2.endsWith("DOWN")) {
+			circle2Y = agent.getLastY() + (agent.getSpeed()*1); 
+		}
+		
+		//dx and dy are the vertical and horizontal distances
+	    double dx = circle2X - circle1X;
+	    double dy = circle2Y - circle1Y;
+	
+	    // Determine the straight-line distance between centers.
+	    double d = Math.sqrt((dy * dy) + (dx * dx));
+	
+	    // Check Intersections
+	    if (d > (circle1Radius + circle2Radius)) {
+	        // No Solution. Circles do not intersect
+	        return false;
+	    } else if (d < Math.abs(circle1Radius - circle2Radius)) {
+	        // No Solution. one circle is contained in the other
+	        return true;
+	    } else {
+	        return true;
+	    }
+	}
+	
+	//method to find new direction for agent
+	public void findNewDirection(Agent agent) {
+		shuffleArray(directions);
+		for (int i = 0; i < directions.length; i++) {
+			if (!futureInterAgentIntersection(agent, directions[i]) && !checkCollision(agent, 800, 800)) {
+				agent.changeDirection(directions[i]);
+				break;
+			}
 		}
 	}
-	return false;
-}
-
-public boolean futureInterAgentIntersection(Agent agent, String direction) {
-	for (int i = 0; i < agents.size(); i++) {
-		if (agent.getID() == agents.get(i).getID()) {
-			continue;
-		} else {
-    		if (checkFutureIntersection(agent, agents.get(i), direction, agents.get(i).getDirection())) {
-    			return true;
-    		}
-		}
-	}
-	return false;
-}
-
-public boolean checkFutureIntersection(Agent agent, Agent agent2, String direction, String direction2) {
-	double circle1X = 0, circle1Y = 0, circle2X = 0, circle2Y = 0;
-	double circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
-	
-	if (direction.equals("LEFT")) {
-		circle1X = agent.getLastX() + (agent.getSpeed()*-1) - 5;
-	} else if (direction.equals("RIGHT")) {
-		circle1X = agent.getLastX() + (agent.getSpeed()*1) + 5;
-	} else if (direction.equals("UP")) {
-		circle1Y = agent.getLastY() + (agent.getSpeed()*-1) - 5;
-	} else if (direction.endsWith("DOWN")) {
-		circle1Y = agent.getLastY() + (agent.getSpeed()*1) + 5;
-	}
-	
-	if (direction2.equals("LEFT")) {
-		circle2X = agent.getLastX() + (agent.getSpeed()*-1) - 5;
-	} else if (direction2.equals("RIGHT")) {
-		circle2X = agent.getLastX() + (agent.getSpeed()*1) + 5;
-	} else if (direction2.equals("UP")) {
-		circle2Y = agent.getLastY() + (agent.getSpeed()*-1) - 5;
-	} else if (direction2.endsWith("DOWN")) {
-		circle2Y = agent.getLastY() + (agent.getSpeed()*1) + 5; 
-	}
-	
-	// dx and dy are the vertical and horizontal distances
-    double dx = circle2X - circle1X;
-    double dy = circle2Y - circle1Y;
-
-    // Determine the straight-line distance between centers.
-    double d = Math.sqrt((dy * dy) + (dx * dx));
-
-    // Check Intersections
-    if (d > (circle1Radius + circle2Radius)) {
-        // No Solution. Circles do not intersect
-        return false;
-    } else if (d < Math.abs(circle1Radius - circle2Radius)) {
-        // No Solution. one circle is contained in the other
-        return true;
-    } else {
-        return true;
-    }
-}
-
-public boolean checkIntersection(Agent agent, Agent agent2, String direction) {
-	double circle1X = 0, circle1Y = 0;
-	double circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
-	double circle2X = agent2.getX();
-	double circle2Y = agent2.getY();
-	
-	if (direction.equals("LEFT")) {
-		circle1X = agent.getLastX() + (agent.getSpeed()*-1);
-	} else if (direction.equals("RIGHT")) {
-		circle1X = agent.getLastX() + (agent.getSpeed()*1);
-	} else if (direction.equals("UP")) {
-		circle1Y = agent.getLastY() + (agent.getSpeed()*-1);
-	} else if (direction.endsWith("DOWN")) {
-		circle1Y = agent.getLastY() + (agent.getSpeed()*1);
-	}
-	
-	// dx and dy are the vertical and horizontal distances
-    double dx = circle2X - circle1X;
-    double dy = circle2Y - circle1Y;
-
-    // Determine the straight-line distance between centers.
-    double d = Math.sqrt((dy * dy) + (dx * dx));
-
-    // Check Intersections
-    if (d > (circle1Radius + circle2Radius)) {
-        // No Solution. Circles do not intersect
-        return false;
-    } else if (d < Math.abs(circle1Radius - circle2Radius)) {
-        // No Solution. one circle is contained in the other
-        return true;
-    } else {
-        return true;
-    }
-}
-
-public void findNewDirection(Agent agent) {
-	for (int i = 0; i < directions.length; i++) {
-		if (!interAgentIntersection(agent, directions[i]) && !futureInterAgentIntersection(agent, directions[i]) && !checkCollision(agent, 800, 800)) {
-			agent.changeDirection(directions[i]);
-			break;
-		}
-	}
-}*/
 
 	//method to check for agents' collisions with boundaries and update direction accordingly
 	public boolean checkCollision(Agent agent, int w, int h) {
@@ -385,6 +342,17 @@ public void findNewDirection(Agent agent) {
 		} else {
 			return false;
 		}
+	}
+	
+	//Implementing Fisher–Yates shuffle
+	public void shuffleArray(String[] ar) { 
+	    Random rnd = ThreadLocalRandom.current();
+	    for (int i = ar.length - 1; i > 0; i--) {
+	    	int index = rnd.nextInt(i + 1);
+	    	String a = ar[index];
+	    	ar[index] = ar[i];
+	    	ar[i] = a;
+	    }
 	}
 
 	//method to broadcast target location to all other agents
@@ -510,11 +478,6 @@ public void findNewDirection(Agent agent) {
 		double sum_i = 0, sum_k = 0;
 
 		for (int i = 0; i < agents.size(); i++) {
-			//fileWriter1.append(Double.toString(col_a));
-			//fileWriter1.append(",");
-
-			//fileWriter1.append(Double.toString(col_i));
-			//fileWriter1.append(",");
 			sum_i += col_i;
 
 			double col_d = (agents.get(i).getScore());
@@ -522,9 +485,6 @@ public void findNewDirection(Agent agent) {
 			double col_f = (col_d / (col_e + 1));
 			double col_k = ((col_f - col_h)/(col_g - col_h));
 			sum_k += col_k;
-			//fileWriter1.append(Double.toString(col_k));
-			//fileWriter1.append(",");
-			//fileWriter1.append("\n");
 		}
 		
 		fileWriter1.append(Double.toString(col_a));
