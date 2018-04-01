@@ -381,22 +381,34 @@ public class ScenarioOne extends JComponent {
 		String filename2 = "G11_2.csv";
 		FileWriter fileWriter1 = null;
 		fileWriter1 = new FileWriter(filename2, true);
+		
+		double sum_i = 0, sum_k = 0;
 
 		for (int i = 0; i < agents.size(); i++) {
-			fileWriter1.append(Double.toString(col_a));
-			fileWriter1.append(",");
+			//fileWriter1.append(Double.toString(col_a));
+			//fileWriter1.append(",");
 
-			fileWriter1.append(Double.toString(col_i));
-			fileWriter1.append(",");
+			//fileWriter1.append(Double.toString(col_i));
+			//fileWriter1.append(",");
+			sum_i += col_i;
 
 			double col_d = (agents.get(i).getScore());
 			double col_e = (agents.get(i).getSteps());
 			double col_f = (col_d / (col_e + 1));
 			double col_k = ((col_f - col_h)/(col_g - col_h));
-			fileWriter1.append(Double.toString(col_k));
-			fileWriter1.append(",");
-			fileWriter1.append("\n");
+			sum_k += col_k;
+			//fileWriter1.append(Double.toString(col_k));
+			//fileWriter1.append(",");
+			//fileWriter1.append("\n");
 		}
+		
+		fileWriter1.append(Double.toString(col_a));
+		fileWriter1.append(",");
+		fileWriter1.append(Double.toString(sum_i/agents.size()));
+		fileWriter1.append(",");
+		fileWriter1.append(Double.toString(sum_k/agents.size()));
+		fileWriter1.append(",");
+		fileWriter1.append("\n");
 		
 		fileWriter1.flush();
 		fileWriter1.close();
