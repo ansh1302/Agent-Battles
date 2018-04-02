@@ -16,6 +16,7 @@ public class ScenarioTwo extends JComponent {
 	
 	//declare array lists to store all agents and respective targets
 	ArrayList<Agent> agents = new ArrayList<Agent>();
+	
 	//ArrayList<Target> targets = new ArrayList<Target>();
 	ArrayList<ArrayList<Target>> targets = new ArrayList<ArrayList<Target>>();
 	
@@ -32,7 +33,7 @@ public class ScenarioTwo extends JComponent {
 			public void run() {
 				while (iteration <= 100) {
 					repaint();
-					try {Thread.sleep(0);} catch (Exception ex) {}
+					try {Thread.sleep(150);} catch (Exception ex) {}
 					if (checkEndOfGame()) {
 						try {
 							generateCSVValues();
@@ -125,7 +126,7 @@ public class ScenarioTwo extends JComponent {
 			//run the game if not all targets have been captured
 			if (!checkEndOfGame()) {
 				if (futureInterAgentIntersection(agents.get(i), agents.get(i).getDirection())) {
-    				findNewDirection(agents.get(i));
+					findNewDirection(agents.get(i));
     			}
 							
 				//move agent either horizontally or vertically
@@ -275,8 +276,8 @@ public class ScenarioTwo extends JComponent {
 
     //method to calculate whether two objects intersect or not
 	public boolean checkFutureIntersection(Agent agent, Agent agent2, String direction, String direction2) {
-		double circle1X = agent.getX(), circle1Y = agent.getY(), circle2X = agent2.getX(), circle2Y = agent2.getY();
-		double circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
+		int circle1X = agent.getX(), circle1Y = agent.getY(), circle2X = agent2.getX(), circle2Y = agent2.getY();
+		int circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
 		
 		if (direction.equals("LEFT")) {
 			circle1X = agent.getLastX() + (agent.getSpeed()*-1) ;
@@ -299,8 +300,8 @@ public class ScenarioTwo extends JComponent {
 		}
 		
 		//dx and dy are the vertical and horizontal distances
-	    double dx = circle2X - circle1X;
-	    double dy = circle2Y - circle1Y;
+	    int dx = circle2X - circle1X;
+	    int dy = circle2Y - circle1Y;
 	
 	    // Determine the straight-line distance between centers.
 	    double d = Math.sqrt((dy * dy) + (dx * dx));
@@ -308,7 +309,7 @@ public class ScenarioTwo extends JComponent {
 	    // Check Intersections
 	    if (d > (circle1Radius + circle2Radius)) {
 	        // No Solution. Circles do not intersect
-	        return false;
+	    	return false;
 	    } else if (d < Math.abs(circle1Radius - circle2Radius)) {
 	        // No Solution. one circle is contained in the other
 	        return true;
@@ -327,21 +328,7 @@ public class ScenarioTwo extends JComponent {
 			}
 		}
 	}
-	
-<<<<<<< HEAD
-=======
-	//method to find new direction BUT it cannot be the restricted direction
-	public void findNewDirection(Agent agent, String restricted) {
-		shuffleArray(directions);
-		for (int i = 0; i < directions.length; i++) {
-			if (!futureInterAgentIntersection(agent, directions[i]) && !directions[i].equals(restricted) && !checkCollision(agent, 800, 800)) {
-				agent.changeDirection(directions[i]);
-				break;
-			}
-		}
-	}
 
->>>>>>> 50e8c94153c31c658bf7d1c15a7b9fd8da35eabe
 	//method to check for agents' collisions with boundaries and update direction accordingly
 	public boolean checkCollision(Agent agent, int w, int h) {
 		if ((agent.getX()+100) >= w) {

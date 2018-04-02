@@ -16,6 +16,7 @@ public class ScenarioOne extends JComponent {
 
 	//declare array lists to store all agents and respective targets
 	ArrayList<Agent> agents = new ArrayList<Agent>();
+	
 	//ArrayList<Target> targets = new ArrayList<Target>();
 	ArrayList<ArrayList<Target>> targets = new ArrayList<ArrayList<Target>>();
 	
@@ -148,45 +149,50 @@ public class ScenarioOne extends JComponent {
 		//draw in all the objects
 		for (int i = 0; i < 5; i++) {
 			if (i == 0) {
-				gg.setColor(Color.BLACK);
-				gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, agentH);
 				gg.setColor(Color.GRAY);
-				gg.fillOval(agents.get(0).getX()+12, agents.get(0).getY()+12, agentW-24, agentH-24);
 				for (int j = 0; j < targets.get(i).size(); j++) {
 					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
 				}
+				gg.setColor(Color.BLACK);
+				gg.fillOval(agents.get(0).getX(), agents.get(0).getY(), agentW, agentH);
+				gg.setColor(Color.GRAY);
+				gg.fillOval(agents.get(0).getX()+12, agents.get(0).getY()+12, agentW-24, agentH-24);				
 			} else if (i == 1) {
+				gg.setColor(Color.RED);
+				for (int j = 0; j < targets.get(i).size(); j++) {
+					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
+				}
 				gg.setColor(Color.BLACK);
 				gg.fillOval(agents.get(1).getX(), agents.get(1).getY(), agentW, agentH);
 				gg.setColor(Color.RED);
 				gg.fillOval(agents.get(1).getX()+12, agents.get(1).getY()+12, agentW-24, agentH-24);
+			} else if (i == 2) {
+				gg.setColor(Color.BLUE);
 				for (int j = 0; j < targets.get(i).size(); j++) {
 					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
 				}
-			} else if (i == 2) {
 				gg.setColor(Color.BLACK);
 				gg.fillOval(agents.get(2).getX(), agents.get(2).getY(), agentW, agentH);
 				gg.setColor(Color.BLUE);
 				gg.fillOval(agents.get(2).getX()+12, agents.get(2).getY()+12, agentW-24, agentH-24);
+			} else if (i == 3) {
+				gg.setColor(Color.GREEN);
 				for (int j = 0; j < targets.get(i).size(); j++) {
 					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
 				}
-			} else if (i == 3) {
 				gg.setColor(Color.BLACK);
 				gg.fillOval(agents.get(3).getX(), agents.get(3).getY(), agentW, agentH);
 				gg.setColor(Color.GREEN);
-				gg.fillOval(agents.get(3).getX()+12, agents.get(3).getY()+12, agentW-24, agentH-24);
+				gg.fillOval(agents.get(3).getX()+12, agents.get(3).getY()+12, agentW-24, agentH-24);				
+			} else if (i == 4) {
+				gg.setColor(Color.YELLOW);
 				for (int j = 0; j < targets.get(i).size(); j++) {
 					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
 				}
-			} else if (i == 4) {
 				gg.setColor(Color.BLACK);
 				gg.fillOval(agents.get(4).getX(), agents.get(4).getY(), agentW, agentH);
 				gg.setColor(Color.YELLOW);
-				gg.fillOval(agents.get(4).getX()+12, agents.get(4).getY()+12, agentW-24, agentH-24);
-				for (int j = 0; j < targets.get(i).size(); j++) {
-					gg.fillOval(targets.get(i).get(j).getX(), targets.get(i).get(j).getY(), agentW, agentH);
-				}
+				gg.fillOval(agents.get(4).getX()+12, agents.get(4).getY()+12, agentW-24, agentH-24);				
 			}
 		}
 	}
@@ -263,8 +269,8 @@ public class ScenarioOne extends JComponent {
 	
 	//method to calculate whether two objects intersect or not
 	public boolean checkFutureIntersection(Agent agent, Agent agent2, String direction, String direction2) {
-		double circle1X = agent.getX(), circle1Y = agent.getY(), circle2X = agent2.getX(), circle2Y = agent2.getY();
-		double circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
+		int circle1X = agent.getX(), circle1Y = agent.getY(), circle2X = agent2.getX(), circle2Y = agent2.getY();
+		int circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
 		
 		if (direction.equals("LEFT")) {
 			circle1X = agent.getLastX() + (agent.getSpeed()*-1) ;
@@ -287,8 +293,8 @@ public class ScenarioOne extends JComponent {
 		}
 		
 		//dx and dy are the vertical and horizontal distances
-	    double dx = circle2X - circle1X;
-	    double dy = circle2Y - circle1Y;
+	    int dx = circle2X - circle1X;
+	    int dy = circle2Y - circle1Y;
 	
 	    // Determine the straight-line distance between centers.
 	    double d = Math.sqrt((dy * dy) + (dx * dx));
@@ -296,7 +302,7 @@ public class ScenarioOne extends JComponent {
 	    // Check Intersections
 	    if (d > (circle1Radius + circle2Radius)) {
 	        // No Solution. Circles do not intersect
-	        return false;
+	    	return false;
 	    } else if (d < Math.abs(circle1Radius - circle2Radius)) {
 	        // No Solution. one circle is contained in the other
 	        return true;
