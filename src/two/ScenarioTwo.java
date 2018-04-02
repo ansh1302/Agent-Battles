@@ -32,7 +32,7 @@ public class ScenarioTwo extends JComponent {
 			public void run() {
 				while (iteration <= 100) {
 					repaint();
-					try {Thread.sleep(200);} catch (Exception ex) {}
+					try {Thread.sleep(0);} catch (Exception ex) {}
 					if (checkEndOfGame()) {
 						try {
 							generateCSVValues();
@@ -77,7 +77,7 @@ public class ScenarioTwo extends JComponent {
 	public void restartGame() {
 		agents.clear(); targets.clear();
 		happy_array = new double[5];
-		System.out.println(iteration);
+		//System.out.println(iteration);
 		iteration++;
 		populateObjects();
 	}
@@ -124,11 +124,7 @@ public class ScenarioTwo extends JComponent {
 
 			//run the game if not all targets have been captured
 			if (!checkEndOfGame()) {
-				//String restricted = checkNeighbours(agents.get(i));
-				
-				/*if (futureInterAgentIntersection(agents.get(i), agents.get(i).getDirection()) && !restricted.equals("")) {
-    				findNewDirection(agents.get(i), restricted);
-    			} else */if (futureInterAgentIntersection(agents.get(i), agents.get(i).getDirection())) {
+				if (futureInterAgentIntersection(agents.get(i), agents.get(i).getDirection())) {
     				findNewDirection(agents.get(i));
     			}
 							
@@ -263,31 +259,6 @@ public class ScenarioTwo extends JComponent {
     	return true;
     }
     
-    /*public String checkNeighbours(Agent agent) {
-    	for (int i = 0; i < agents.size(); i++) {
-    		if (agent.getID() == agents.get(i).getID()) {
-    			continue;
-    		} else {
-    			if (getDistance(agent.getX(), agents.get(i).getX(), agent.getY(), agents.get(i).getY()) <= 50) {
-    				if (agent.getX() == agents.get(i).getX()) {
-    					if (agent.getY() < agents.get(i).getY()) {
-    						return "DOWN";
-    					} else if (agent.getY() > agents.get(i).getY()) {
-    						return "UP";
-    					}
-    				} else if (agent.getY() == agents.get(i).getY()) {
-    					if (agent.getX() < agents.get(i).getX()) {
-    						return "RIGHT";
-    					} else if (agent.getX() > agents.get(i).getX()) {
-    						return "LEFT";
-    					}
-    				}
-    			}
-    		}
-    	}
-    	return "";
-    }*/
-    
     //method to check future intersection with all other agents
     public boolean futureInterAgentIntersection(Agent agent, String direction) {
 		for (int i = 0; i < agents.size(); i++) {
@@ -357,6 +328,8 @@ public class ScenarioTwo extends JComponent {
 		}
 	}
 	
+<<<<<<< HEAD
+=======
 	//method to find new direction BUT it cannot be the restricted direction
 	public void findNewDirection(Agent agent, String restricted) {
 		shuffleArray(directions);
@@ -368,6 +341,7 @@ public class ScenarioTwo extends JComponent {
 		}
 	}
 
+>>>>>>> 50e8c94153c31c658bf7d1c15a7b9fd8da35eabe
 	//method to check for agents' collisions with boundaries and update direction accordingly
 	public boolean checkCollision(Agent agent, int w, int h) {
 		if ((agent.getX()+100) >= w) {
@@ -492,8 +466,14 @@ public class ScenarioTwo extends JComponent {
 
 				fileWriter.append(Double.toString(col_j));
 				fileWriter.append(",");
-
-				double col_k = ((col_f - col_h) / (col_g - col_h)); // Column K : Agent Competitiveness
+				
+				double col_k;
+				if (col_g - col_h == 0)  {
+					col_k = 0;// Column K : Agent Competitiveness
+				} else {
+					col_k = ((col_f - col_h) / (col_g - col_h));
+				}
+				
 				fileWriter.append(Double.toString(col_k));
 				fileWriter.append(",");
 				fileWriter.append("\n");
@@ -526,7 +506,12 @@ public class ScenarioTwo extends JComponent {
 			double col_d = (agents.get(i).getScore());
 			double col_e = (agents.get(i).getSteps());
 			double col_f = (col_d / (col_e + 1));
-			double col_k = ((col_f - col_h)/(col_g - col_h));
+			double col_k;
+			if (col_g - col_h == 0)  {
+				col_k = 0;// Column K : Agent Competitiveness
+			} else {
+				col_k = ((col_f - col_h) / (col_g - col_h));
+			}
 			sum_k += col_k;
 		}
 		
