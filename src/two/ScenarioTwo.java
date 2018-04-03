@@ -23,6 +23,8 @@ public class ScenarioTwo extends JComponent {
 	String[] directions = {"UP", "DOWN", "LEFT", "RIGHT"}; //array of direction strings
 	double[] happy_array = new double[5]; // for CSV outputs
 	int iteration = 1;
+	
+	Random r = new Random();
 
 	//constructor for the field's canvas
 	public ScenarioTwo() {
@@ -31,10 +33,10 @@ public class ScenarioTwo extends JComponent {
 		//GUI runnable method
 		Thread animationThread = new Thread(new Runnable() {
 			public void run() {
-				while (iteration <= 100) {
+				while (iteration <= 100) { //play 100 games
 					repaint();
 					try {Thread.sleep(150);} catch (Exception ex) {}
-					if (checkEndOfGame()) {
+					if (checkEndOfGame()) { //if game has not ended
 						try {
 							generateCSVValues();
 						} catch (IOException e) {
@@ -51,8 +53,8 @@ public class ScenarioTwo extends JComponent {
 	
 	//method to create and initialize all agent and target objects
 	public void populateObjects() {
+		
 		//starting coordinates and direction
-		Random r = new Random();
 		int dir; int coorX, coorY;
 
 		//loop to dynamically create and initialize agents
@@ -76,9 +78,11 @@ public class ScenarioTwo extends JComponent {
 	
 	//method to restart the game and all of its components
 	public void restartGame() {
+		
+		//re-create all objects and increment iteration value
 		agents.clear(); targets.clear();
 		happy_array = new double[5];
-		//System.out.println(iteration);
+		System.out.println(iteration);
 		iteration++;
 		populateObjects();
 	}
@@ -86,14 +90,13 @@ public class ScenarioTwo extends JComponent {
 	//method to draw objects on field canvas
 	public void paintComponent(Graphics g) {
 		Graphics2D gg = (Graphics2D) g; //object interface graphics library
-		Random rand = new Random();
 
 		//store screen width and height
 		int w = 800; int h = 800;
 
 		//decision loop for each agent
 		for (int i = 0; i < agents.size(); i++) {
-			int  n = rand.nextInt(10) + 1;
+			int  n = r.nextInt(10) + 1;
 
 			//if target's location is known to be within the boundaries of the field, send agent to its target
 			if ((agents.get(i).getMemLength() > 0)) {
@@ -138,6 +141,7 @@ public class ScenarioTwo extends JComponent {
 				agents.get(i).addStep();
 			}
 			checkRange(i); //check if any target is in range with any agent
+			
 			//store agent's last known location for next movement
 			agents.get(i).setLastX(agents.get(i).getX()); agents.get(i).setLastY(agents.get(i).getY());
 		}
@@ -199,7 +203,6 @@ public class ScenarioTwo extends JComponent {
 
 	//method to check each agent's radar
     public void checkRange(int i) {
-    	Random r = new Random();
     	
     	//check if any targets are within range of any agents
     	for (int x = 0; x < targets.size(); x++) {
@@ -247,6 +250,17 @@ public class ScenarioTwo extends JComponent {
 	public double getDistance(int x1, int x2, int y1, int y2) {
 		return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2));
 	}
+	
+	//Implementing Fisher–Yates shuffle
+	public void shuffleArray(String[] ar) { 
+	    Random rnd = ThreadLocalRandom.current();
+	    for (int i = ar.length - 1; i > 0; i--) {
+	    	int index = rnd.nextInt(i + 1);
+	    	String a = ar[index];
+	    	ar[index] = ar[i];
+	    	ar[i] = a;
+	    }
+	}
 
 	//method to check if any agent has acquired all of its targets to signal end of game
     public boolean checkEndOfGame() {
@@ -279,6 +293,7 @@ public class ScenarioTwo extends JComponent {
 		int circle1X = agent.getX(), circle1Y = agent.getY(), circle2X = agent2.getX(), circle2Y = agent2.getY();
 		int circle1Radius = agent.getWidth(); double circle2Radius = agent2.getWidth();
 		
+		//determine new hypothetical position for current agent
 		if (direction.equals("LEFT")) {
 			circle1X = agent.getLastX() + (agent.getSpeed()*-1) ;
 		} else if (direction.equals("RIGHT")) {
@@ -289,6 +304,7 @@ public class ScenarioTwo extends JComponent {
 			circle1Y = agent.getLastY() + (agent.getSpeed()*1);
 		}
 		
+		//determine new hypothetical position for second agent being checked against
 		if (direction2.equals("LEFT")) {
 			circle2X = agent.getLastX() + (agent.getSpeed()*-1);
 		} else if (direction2.equals("RIGHT")) {
@@ -318,16 +334,6 @@ public class ScenarioTwo extends JComponent {
 	    }
 	}
 	
-	//method to find new direction for agent
-	public void findNewDirection(Agent agent) {
-		shuffleArray(directions);
-		for (int i = 0; i < directions.length; i++) {
-			if (!futureInterAgentIntersection(agent, directions[i]) && !checkCollision(agent, 800, 800)) {
-				agent.changeDirection(directions[i]);
-				break;
-			}
-		}
-	}
 
 	//method to check for agents' collisions with boundaries and update direction accordingly
 	public boolean checkCollision(Agent agent, int w, int h) {
@@ -348,15 +354,15 @@ public class ScenarioTwo extends JComponent {
 		}
 	}
 	
-	//Implementing Fisher–Yates shuffle
-	public void shuffleArray(String[] ar) { 
-	    Random rnd = ThreadLocalRandom.current();
-	    for (int i = ar.length - 1; i > 0; i--) {
-	    	int index = rnd.nextInt(i + 1);
-	    	String a = ar[index];
-	    	ar[index] = ar[i];
-	    	ar[i] = a;
-	    }
+	//method to find new direction for agent
+	public void findNewDirection(Agent agent) {
+		shuffleArray(directions);
+		for (int i = 0; i < directions.length; i++) {
+			if (!futureInterAgentIntersection(agent, directions[i]) && !checkCollision(agent, 800, 800)) {
+				agent.changeDirection(directions[i]);
+				break;
+			}
+		}
 	}
 
 	//method to broadcast target location to all other agents
@@ -370,6 +376,7 @@ public class ScenarioTwo extends JComponent {
     	}
     }
 	
+    //one-on-one message from agent to agent
 	public void sendPrivately(Agent agent, Target target) {
     	for (int i = 0; i < agents.size(); i++) {
     		if (agents.get(i).getID() == agent.getID()) {

@@ -5,38 +5,28 @@ import java.util.ArrayList;
 public class Agent {
 	
 	//all instances of the Agent object
-	private int lastX;
-	private int lastY;
-    private int x;
-    private int y;
-    private int directionX;
-    private int directionY;
+	private int lastX, lastY;
+    private int x, y;
+    private int directionX, directionY;
     private String direction;
     private ArrayList<Integer> targetX;
     private ArrayList<Integer> targetY;
     private int ID;
-    private int score;
-    private int width;
-    private int height;
-    private int speed;
-    private int steps;
+    private int score, steps;
+    private int width, height, speed;
     
     //constructor to initialize all instances of Agent object
     public Agent(int id, int x, int y, String direction) {
-    	this.score = 0;
-    	this.lastX = x;
-    	this.lastY = y;
-    	this.x = x;
-    	this.y = y;
+    	this.score = 0; this.steps = 0;
+    	this.lastX = x; this.lastY = y;
+    	this.x = x; this.y = y;
     	this.direction = direction;
     	this.ID = id;
     	this.targetX = new ArrayList<Integer>();
     	this.targetY = new ArrayList<Integer>();
     	changeDirection(this.direction);
-    	this.width = 50;
-    	this.height = 50;
+    	this.width = 50; this.height = 50;
     	this.speed = 50;
-    	this.steps = 0;
     }
     
     //getter and setter methods for all instances of Agent object
@@ -163,6 +153,7 @@ public class Agent {
     //method to store an agent's target in its memory
     public void receive(int x, int y, int targetNum) {
     	if (targetNum == this.ID) { //check to make sure the correct agent is receiving it
+    		
     		if (!this.checkAdded(x, y)) { //only add if it is not already in memory
     			
     			//check where in the scheduling queue to add the new target location

@@ -3,16 +3,14 @@ package objects;
 public class Target {
 	
 	//declare all instances of Target object
-	private int x;
-	private int y;
+	private int x, y;
 	private int ID;
 	private boolean captured;
 	
 	//constructor to initialize instances of Target object
 	public Target(int id, int x, int y, boolean captured) {
 		this.ID = id;
-		this.x = x;
-		this.y = y;
+		this.x = x; this.y = y;
 		this.captured = captured;
 	}
 	
