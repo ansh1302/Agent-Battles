@@ -35,7 +35,7 @@ public class ScenarioTwo extends JComponent {
 			public void run() {
 				while (iteration <= 100) { //play 100 games
 					repaint();
-					try {Thread.sleep(150);} catch (Exception ex) {}
+					try {Thread.sleep(120);} catch (Exception ex) {}
 					if (checkEndOfGame()) { //if game has not ended
 						try {
 							generateCSVValues();
